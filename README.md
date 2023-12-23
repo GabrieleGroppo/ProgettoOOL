@@ -41,7 +41,15 @@ Se anche solo uno di questi requisiti non è rispettato verrà restituito un err
 ```
 
 #### Descrizione
+Lo scopo di questa funzione è aggiungere una definizione di classe nella tabella hash denominata *classes-database*. La chiave nella tabella hash è il parametro *name* e il valore corrispondente è il parametro di *class-definition*.
 
 #### Parametri
+- `name`
+	- nome della classe
+- `class-definition`
+	- definizione della classe:
+		- parents
+		- metodi
+		- campi
 
 ## Funzioni
