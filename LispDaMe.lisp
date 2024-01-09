@@ -17,18 +17,35 @@
   (cond ((not (atom class-name))
 	 (error (format nil "Def-class: unable to create the class -> ~a is not an atom" class-name)))
 	((equal class-name '())
-	 (error (format nil "Def-class: unable to create the class -> ~a is an empty list" class-name)))
+	 (error
+	  (format nil
+	   "Def-class: unable to create the class -> ~a is an empty list"
+	   class-name)))
 	((null class-name)
-	 (error (format nil "Def-class: unable to create the class -> ~a is NULL" class-name)))
+	 (error
+	  (format nil
+		  "Def-class: unable to create the class -> ~a is NULL"
+		  class-name)))
 	((not (listp parents))
-	 (error (format nil "Def-class: unable to create the class -> ~a is an not a list" parents)))
+	 (error
+	  (format nil
+		  "Def-class: unable to create the class -> ~a is an not a list"
+		  parents)))
 	((is-class class-name)
-	 (error (format nil "Def-class: unable to create the class -> ~a already exists" class-name)))
+	 (error
+	  (format nil
+		  "Def-class: unable to create the class -> ~a already exists"
+		  class-name)))
 	((and parents
 	      (not (null (member nil (mapcar #'is-class parents)))))
-	 (error (format nil "Def-class: unable to create the class -> some of the parents are not existing classes")))
+	 (error
+	  (format nil
+		  "Def-class: unable to create the class -> some of the parents are not existing classes")))
 	((member class-name parents)
-	 (error (format nil "Def-class: unable to create the class -> ~a is also present in its parents' list ~a" class-name parents))))
+	 (error
+	  (format nil
+		  "Def-class: unable to create the class -> ~a is also present in its parents' list ~a"
+		  class-name parents))))
   (parent* class-name parents)
 ;;;creazione della classe
   (add-class-spec class-name
@@ -73,7 +90,7 @@
   (if (= (list-length parts) 0)
       (error (format nil "parts-structure: list-length is equal to zero"))
       (cons
-       (fields-structure parents (car parts))(methods-structure (cdr parts)))))
+       (fields-structure parents (car parts))(list (methods-structure parents (cadr parts))))))
 
 (defun fields-structure (parents fields)
   (when fields
@@ -99,12 +116,15 @@
 			 (not (equal (caddr current-field) 'list))
 			 (not (equal (caddr current-field) 'float))
 			 (not (is-class (caddr current-field))))
-			(error (format nil "Field-definition: ~a is not a Common-Lisp type or an existing class"
+			(error
+			 (format nil
+				 "Field-definition: ~a is not a Common-Lisp type or an existing class"
 				       (caddr current-field))))
 		       ((not
 			 (typep (cadr current-field)
 				(caddr current-field)))
-			(error (format nil "Field-definition: value ~a of field ~a is not of the type specified (~a)"
+			(error
+			 (format nil "Field-definition: value ~a of field ~a is not of the type specified (~a)"
 				       (cadr current-field) (car current-field) (caddr current-field))))
 		       ((and (not (null parents))
 			     (member (car current-field)
@@ -124,11 +144,27 @@
 		  (cadr current-field)
 		  (caddr current-field))))))))
 
-(defun methods-structure (methods)
-;;;methods è la lista dei metodi
-  (when methods
-;;;process-method
-    (cons (car methods) (methods-structure (cdr methods)))))
+(defun methods-structure (parents methods)
+	(when methods
+	 	(cons
+			(method-definition parents (car methods))
+			(methods-structure parents (cdr methods)))))
+;;; (speak (args1 agrs2 ...) (corpo))
+(defun method-definition (parents current-method)
+	 (cond 
+	 	((equal 'methods current-method) 'methods)
+		(T 
+			(cond
+				((not (listp current-method)) (error (format nil "")))
+				((null (car current-method)) (error (format nil "")))
+				((not (symbolp (car current-method))) (error (format nil "")))
+				((not (listp (cadr current-method))) (error (format nil "")))
+			)
+			(list (car current-method) (cadr current-method) (caddr current-method))
+			(cons (car current-method) (process-method (car current-method) (cdr current-method)))
+		)
+	)
+)
 
 ;;;make: crea una nuova istanza di una classe
 (defun make (class-name &rest fields)
@@ -233,7 +269,9 @@
   (when field-from-make
     (format *STANDARD-OUTPUT* "Ffpof: checking ~a in ~a~%" (car field-from-make) list-of-total-fields)
     (cond ((member (car field-from-make) (get-fields-name-of-class list-of-total-fields))
-	   (format *STANDARD-OUTPUT* "Ffpof: ~a is a member of ~a -(list of the fields' name from the tree of the class)~%" (car field-from-make) (get-fields-name-of-class list-of-total-fields))
+	   (format *STANDARD-OUTPUT* "Ffpof: ~a is a member of ~a -(list of the fields' name from the tree of the class)~%"
+		   (car field-from-make)
+		   (get-fields-name-of-class list-of-total-fields))
 	   (format *STANDARD-OUTPUT* "Ffpof: checking type matching (or subtype) between ~a and ~a~%"
 		   (cadr field-from-make) (caddr (find (car field-from-make) list-of-total-fields :test #'member)))
 	   (cond ((subtypep (type-of(cadr field-from-make))
@@ -303,15 +341,55 @@
 ;;;method-name -> car(method-name)
   (unless (method* (car parents) method-name)(get-parents-method (cdr parents) method-name)))
 
+;;;((nome . interpreted...) (nome .interpreted...))
+(defun get-methods-name-of-class (class-methods)
+	(when class-methods (cons (caar class-methods) (get-methods-name-of-class (cdr class-methods))))
+)
+;;;  (when class-fields (cons (caar class-fields) (get-fields-name-of-class (cdr class-fields))))
 (defun is-method (class-name method-name)
-  (when class-name
-    (format *STANDARD-OUTPUT* "Is-method: Checking ~a in ~a~%" method-name class-name)
-    (cond ((not (member method-name (get-fields-name-of-class (cdr (nth 3 (get-class-spec class-name))))))
-	   (format *STANDARD-OUTPUT* "Is-method: method ~a not found in this class (~a), Checking in parents...~%" method-name class-name)
-	   (cond ((null (cadr (get-class-spec class-name)))
-		  (error (format nil "Is-method: This class has no parents so method ~a does not exist!~%" method-name)))
-		 (T  (get-parents-method (cadr (get-class-spec class-name)) method-name)))))
-    (nth 2 (find (car (list method-name)) (cdr (nth 3 (get-class-spec class-name))) :test #'member))))   
+	
+	(cond
+		(
+			(not (is-class class-name))
+			(cond
+				((or (atom class-name) (not (listp class-name)) (not (eql 'OOLINST (car class-name)))) 
+					(error (format nil "")))
+				(T 
+					(format *STANDARD-OUTPUT* "Is-method: Checking ~a in class of ~a~%" method-name class-name)
+					(cond 	(	(or 
+									(null (nth 3 (get-class-spec (nth 1 class-name))))
+									(not (member method-name (get-methods-name-of-class (cdr (nth 3 (get-class-spec (nth 1 class-name)))))))
+								)
+								(format *STANDARD-OUTPUT* "Is-method: method ~a not found in this class (~a), Checking in parents...~%" method-name (nth 1 class-name))
+								(cond 	(	
+											(null 	(cadr (get-class-spec (nth 1 class-name))))
+											(error 	(format nil "Is-method: This class has no parents so method ~a does not exist!~%" method-name))
+										)
+										(T  (get-parents-method (cadr (get-class-spec (nth 1 class-name))) method-name))
+								)
+							)
+					)
+					(cdr (find (car (list method-name)) (cdr (nth 3 (get-class-spec (nth 1 class-name)))) :test #'member))
+				)
+			)
+		)
+		(T 
+			(format *STANDARD-OUTPUT* "Is-method (class): Checking ~a in class ~a~%" method-name class-name)
+			(cond 	(
+						(not (member method-name (get-methods-name-of-class (cdr (nth 3 (get-class-spec class-name))))))
+						(format *STANDARD-OUTPUT* "Is-method: method ~a not found in this class (~a), Checking in parents...~%" method-name class-name)
+						(cond 	(
+									(null (cadr (get-class-spec class-name)))
+									(error (format nil "Is-method: This class has no parents so method ~a does not exist!~%" method-name))
+								)
+								(T  (get-parents-method (cadr (get-class-spec class-name)) method-name))
+						)
+					)
+		 	)
+			(cdr (find (car (list method-name)) (cdr (nth 3 (get-class-spec class-name))) :test #'member)))
+	)
+)
+
 
 ;;; get-method: estrae i metodi dai field
 (defun get-method (fields)
@@ -328,14 +406,14 @@
 
 
 (defun rewrite-method-code (method-name method-spec)
-  (cons method-name
-	(append (list (cons 'this (car method-spec)))
-		(cdr method-spec))))
+	(cons 'lambda (cons 
+		(cons 'this (car method-spec))
+		(cdr method-spec)
+	))
+)
 
 (defun process-method (method-name method-spec)
-  (let ((this (first method-spec)))
-    (setf   (fdefinition method-name)
+	(setf (fdefinition method-name)
 	    (lambda (this &rest args)
-	      (apply (is-method this method-name) (append this args))))
-    (eval (rewrite-method-code method-name method-spec))))
-            
+			(apply (is-method this method-name) (append (list this) args))))
+			(eval (rewrite-method-code method-name method-spec)))
