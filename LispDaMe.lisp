@@ -92,11 +92,30 @@
       (cons
        (fields-structure parents (car parts))(list (methods-structure parents (cadr parts))))))
 
+
+(defun elemento-presente-p (elemento lista)
+  (cond
+    ((null lista) nil)
+    ((eql elemento (car lista)) t)
+    (t (elemento-presente-p elemento (cdr lista)))))
+
+(defun lista-contiene-duplicati-p (lista)
+  (cond
+    ((null lista) nil)
+    ((elemento-presente-p (car lista) (cdr lista)) t)
+    (t (lista-contiene-duplicati-p (cdr lista)))))
+
 (defun fields-structure (parents fields)
-  (when fields
-    (cons
-     (field-definition parents (car fields))
-     (fields-structure parents (cdr fields)))))
+  	(when fields
+		(if (lista-contiene-duplicati-p (get-fields-name-of-class (cdr fields)))
+			(error (format nil "fields-structure: duplicated fields detected"))
+			(cons
+				(field-definition parents (car fields))
+				(fields-structure parents (cdr fields))
+			)
+		)
+	)
+)
 
 (defun field-definition (parents current-field)
   (cond ((equal 'fields current-field)
@@ -115,6 +134,9 @@
 			 (not (equal (caddr current-field) 'string))
 			 (not (equal (caddr current-field) 'list))
 			 (not (equal (caddr current-field) 'float))
+			 (not (equal (caddr current-field) 'real))
+			 (not (equal (caddr current-field) 'rational))
+			 (not (equal (caddr current-field) 'complex))
 			 (not (is-class (caddr current-field))))
 			(error
 			 (format nil
@@ -146,19 +168,26 @@
 
 (defun methods-structure (parents methods)
 	(when methods
-	 	(cons
-			(method-definition parents (car methods))
-			(methods-structure parents (cdr methods)))))
+		(if (lista-contiene-duplicati-p (get-fields-name-of-class (cdr methods)))
+			(error (format nil "methods-structure: duplicated methods detected"))
+			(cons
+				(method-definition parents (car methods))
+				(methods-structure parents (cdr methods))
+			)
+		)
+	)
+)
+
 ;;; (speak (args1 agrs2 ...) (corpo))
 (defun method-definition (parents current-method)
 	 (cond 
 	 	((equal 'methods current-method) 'methods)
 		(T 
 			(cond
-				((not (listp current-method)) (error (format nil "")))
-				((null (car current-method)) (error (format nil "")))
-				((not (symbolp (car current-method))) (error (format nil "")))
-				((not (listp (cadr current-method))) (error (format nil "")))
+				((not (listp current-method)) (error (format nil "method-definition: a")))
+				((null (car current-method)) (error (format nil "method-definition: b")))
+				((not (symbolp (car current-method))) (error (format nil "method-definition: c")))
+				((not (listp (cadr current-method))) (error (format nil "method-definition: d")))
 			)
 			(list (car current-method) (cadr current-method) (caddr current-method))
 			(cons (car current-method) (process-method (car current-method) (cdr current-method)))
@@ -307,7 +336,7 @@
               (setq new-list (cons sublist new-list))))))
     (nreverse new-list)))
  
-;;;ottengo i nomi dei campi contenuti in fields
+;;;ottengo i nomi dei campi contenuti in fields (per le istanza)
 (defun get-fields-name (fields)
   (when fields
     (cons (car fields) (get-fields-name (cddr fields)))))
@@ -337,9 +366,18 @@
 	   ((atom field-name)
 	    (is-method class-name field-name)))))
 
-(defun get-parents-method (parents method-name)
+(defun get-parents-method-fake (parents method-name)
 ;;;method-name -> car(method-name)
-  (unless (method* (car parents) method-name)(get-parents-method (cdr parents) method-name)))
+  (unless (method* (car parents) method-name)(get-parents-method-fake (cdr parents) method-name)))
+
+(defun get-parents-method (parents method-name)
+  "Restituisce il metodo chiamato method-name dai genitori."
+  (if parents
+      (let ((current-parent (car parents)))
+        (if (method* current-parent method-name)
+            (method* current-parent method-name)
+            (get-parents-method (cdr parents) method-name)))
+      nil))
 
 ;;;((nome . interpreted...) (nome .interpreted...))
 (defun get-methods-name-of-class (class-methods)
@@ -353,7 +391,7 @@
 			(not (is-class class-name))
 			(cond
 				((or (atom class-name) (not (listp class-name)) (not (eql 'OOLINST (car class-name)))) 
-					(error (format nil "")))
+					(error (format nil "pippo")))
 				(T 
 					(format *STANDARD-OUTPUT* "Is-method: Checking ~a in class of ~a~%" method-name class-name)
 					(cond 	(	(or 
@@ -368,8 +406,8 @@
 										(T  (get-parents-method (cadr (get-class-spec (nth 1 class-name))) method-name))
 								)
 							)
+							(T (cdr (assoc method-name (cdr (nth 3 (get-class-spec (nth 1 class-name)))))))
 					)
-					(cdr (find (car (list method-name)) (cdr (nth 3 (get-class-spec (nth 1 class-name)))) :test #'member))
 				)
 			)
 		)
@@ -385,8 +423,9 @@
 								(T  (get-parents-method (cadr (get-class-spec class-name)) method-name))
 						)
 					)
+					(T (cdr (assoc method-name (cdr (nth 3 (get-class-spec class-name))))))
 		 	)
-			(cdr (find (car (list method-name)) (cdr (nth 3 (get-class-spec class-name))) :test #'member)))
+		)
 	)
 )
 
