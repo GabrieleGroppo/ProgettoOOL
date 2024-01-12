@@ -14,36 +14,44 @@
 (defun def-class (class-name parents &rest parts)
 ;;; Controlli per eventuali valori imprevisti
   (cond ((not (atom class-name))
-	 (error (format nil "Def-class: unable to create the class -> ~a is not an atom" class-name)))
+	 (error (format nil "Def-class: 
+	 unable to create the class -> ~a is not an atom" class-name)))
 	((equal class-name '())
 	 (error
 	  (format nil
-	   "Def-class: unable to create the class -> ~a is an empty list"
+	   "Def-class: 
+		unable to create the class -> ~a is an empty list"
 	   class-name)))
 	((null class-name)
 	 (error
 	  (format nil
-		  "Def-class: unable to create the class -> ~a is NULL"
+		  "Def-class: 
+		  	unable to create the class -> ~a is NULL"
 		  class-name)))
 	((not (listp parents))
 	 (error
 	  (format nil
-		  "Def-class: unable to create the class -> ~a is an not a list"
+		  "Def-class: 
+		  unable to create the class -> ~a is an not a list"
 		  parents)))
 	((is-class class-name)
 	 (error
 	  (format nil
-		  "Def-class: unable to create the class -> ~a already exists"
+		  "Def-class: 
+		  unable to create the class -> ~a already exists"
 		  class-name)))
 	((and parents
 	      (not (null (member nil (mapcar #'is-class parents)))))
 	 (error
 	  (format nil
-		  "Def-class: unable to create the class -> some of the parents are not existing classes")))
+		  "Def-class: 
+		  fail to create the class: specified parents are not existing classes"))
+	)
 	((member class-name parents)
 	 (error
 	  (format nil
-		  "Def-class: unable to create the class -> ~a is also present in its parents' list ~a"
+		  "Def-class: 
+		  unable to create: the class ~a is also present in its parents' list ~a"
 		  class-name parents))))
   (parent* class-name parents)
 ;;; Creazione della classe
@@ -89,7 +97,8 @@
   (if (= (list-length parts) 0)
       (error (format nil "parts-structure: list-length is equal to zero"))
       (cons
-       (fields-structure parents (car parts))(list (methods-structure parents (cadr parts))))))
+       (fields-structure parents (car parts))
+		 (list (methods-structure parents (cadr parts))))))
 
 ;;; Definisce la struttura dei campi
 (defun fields-structure (parents fields)
@@ -98,11 +107,7 @@
 			(error (format nil "fields-structure: duplicated fields detected"))
 			(cons
 				(field-definition parents (car fields))
-				(fields-structure parents (cdr fields))
-			)
-		)
-	)
-)
+				(fields-structure parents (cdr fields))))))
 
 ;;; Controlla la validità di un attributo
 (defun field-definition (parents current-field)
@@ -122,25 +127,17 @@
 						(list
 							(car current-field)
 							(cadr current-field)
-							(caddr current-field)))
-				)
-			)
-		)
-	)
-)
+							(caddr current-field))))))))
 
 ;;; Definisce la struttura dei metodi
 (defun methods-structure (parents methods)
 	(when methods
 		(if (contains-duplicates (get-fields-name-of-class (cdr methods)))
-			(error (format nil "methods-structure: duplicated methods detected"))
+			(error (format nil "methods-structure: 
+			duplicated methods detected"))
 			(cons
 				(method-definition parents (car methods))
-				(methods-structure parents (cdr methods))
-			)
-		)
-	)
-)
+				(methods-structure parents (cdr methods))))))
 
 ;;; Controlla la validità di un metodo
 (defun method-definition (parents current-method)
@@ -148,16 +145,27 @@
 	 	((equal 'methods current-method) 'methods)
 		(T 
 			(cond
-				((not (listp current-method)) (error (format nil "method-definition: a")))
-				((null (car current-method)) (error (format nil "method-definition: b")))
-				((not (symbolp (car current-method))) (error (format nil "method-definition: c")))
-				((not (listp (cadr current-method))) (error (format nil "method-definition: d")))
-			)
-			(list (car current-method) (cadr current-method) (caddr current-method))
-			(cons (car current-method) (process-method (car current-method) (cdr current-method)))
-		)
-	)
-)
+				(
+					(not (listp current-method)) 
+					(error (format nil "method-definition: 
+					the method is not a list")))
+				(
+					(null (car current-method)) 
+					(error (format nil "method-definition: 
+					method-name is null")))
+				(
+					(not (symbolp (car current-method))) 
+					(error (format nil "method-definition: 
+					method-name is not a symbol")))
+				(
+					(not (listp (cadr current-method))) 
+					(error (format nil "method-definition: 
+					method body is not a list"))))
+			(list (car current-method) 
+					(cadr current-method) 
+					(caddr current-method))
+			(cons (car current-method) 
+					(process-method (car current-method) (cdr current-method))))))
 
 ;;; Crea una nuova istanza di una classe
 (defun make (class-name &rest fields)
@@ -169,44 +177,78 @@
   (instance-rapresentation class-name fields))
 
 ;;; Verifico la correttezza dei campi
-(defun field* (class-name fields)
-  (when fields
-;;; fields è una lista
-    (cond ((listp fields)
-	   (field class-name (car fields))
-	   (field* class-name (cdr fields)))
-;;; fields è un atomo
-	  ((atom fields)
-	   (field class-name fields)))))
+(defun field* (instance field-name)
+  (when field-name
+;;; field-name è una lista
+    (cond ((listp field-name)
+	   (field instance (car field-name))
+	   (field* instance (cdr field-name)))
+;;; field-name è un atomo
+	  ((atom field-name)
+	   (field instance field-name)))))
 
 ;;; Estrae il valore di un campo da una classe (valore attributo nella classe)
-;;;controllo che field-name sia membro dei fields della classe class-name
-(defun field (class-name field-name)              
-;;;istanza -> class-name è il nome dell'istanza
-  (cond ((not (is-class class-name))
-	 (cond ((cond ((or (atom class-name)
-			   (not (listp class-name)))
-		       (error (format nil "Field (instance): ~a is not a class or an instance" class-name)))
-		      ((not (eql 'OOLINST (car class-name)))
-		       (error (format nil "Field (instance): ~a is not a class or an instance" class-name)))))
-	       ((eql 'OOLINST (car class-name))
-		(format *STANDARD-OUTPUT* "Field (instance): Checking ~a in instance ~a~%" field-name class-name)
-		(cond((not (member field-name (get-fields-name-of-class (nth 2 class-name))))
-		      (error (format nil "Field (instance): field ~a does not exist in the instance ~a~%" field-name class-name)))
-		     (t  (format *STANDARD-OUTPUT* "Field (instance): field ~a found in this instance (~a)~%" field-name (get-fields-name-of-class (nth 2 class-name))))))))
-;;;classe -> class-name è il nome della classe
-	(t (format *STANDARD-OUTPUT* "Field (class): Checking ~a in class ~a~%" field-name class-name)
-	   (cond ((not (member field-name (get-fields-name-of-class (cdr (nth 2 (get-class-spec class-name))))))
-		  (format *STANDARD-OUTPUT* "field (class): field ~a not found in this class (~a), Checking in parents...~%" field-name class-name)
-		  (cond ((null (cadr (get-class-spec class-name)))
-			 (error (format nil "Field (class): This class has no parents so field ~a does not exist!~%" field-name)))
-			(T (get-parents (cadr (get-class-spec class-name)) field-name))))
-		 (t (format *STANDARD-OUTPUT* "Field (class): field ~a found in this class (~a)~%" field-name class-name)))))
-  (if (is-class class-name)
+;;;controllo che field-name sia membro dei fields della classe instance
+(defun field (instance field-name)              
+;;;istanza -> instance è il nome dell'istanza
+  (cond ((not (is-class instance))
+	 (cond ((cond ((or (atom instance)
+			   (not (listp instance)))
+		       (error 
+				 	(format nil "Field (instance): 
+						~a is not a class or an instance" 
+						instance)))
+		      ((not (eql 'OOLINST (car instance)))
+		       (error 
+				 	(format nil "Field (instance): 
+					~a is not a class or an instance" 
+				 	instance)))))
+	       ((eql 'OOLINST (car instance))
+		(format *STANDARD-OUTPUT* "Field (instance): 
+			Checking ~a in instance ~a~%" 
+				field-name 
+				instance)
+		(cond ((not 
+					(member 
+						field-name 
+						(get-fields-name-of-class (nth 2 instance))))
+		      (error 
+					(format nil "Field (instance): 
+						field ~a does not exist in the instance ~a~%" 
+						field-name 
+						instance)))
+		     (t  (format *STANDARD-OUTPUT* "Field (instance): 
+			  			field ~a found in this instance (~a)~%"
+			  			field-name 
+						(get-fields-name-of-class (nth 2 instance))))))))
+;;;classe -> instance è il nome della classe
+	(t (format *STANDARD-OUTPUT* "Field (class): Checking ~a in class ~a~%" 
+		field-name 
+		instance)
+	   (cond ((not 
+					(member 
+						field-name 
+						(get-fields-name-of-class 
+							(cdr (nth 2 (get-class-spec instance))))))
+		  (format *STANDARD-OUTPUT* "field (class): 
+		  	field ~a not found in this class (~a), Checking in parents...~%"
+		  	field-name 
+			instance)
+		  (cond ((null (cadr (get-class-spec instance)))
+			 (error 
+			 	(format nil "Field (class): 
+					This class has no parents so field ~a does not exist!~%"
+					field-name)))
+			(T (get-parents (cadr (get-class-spec instance)) field-name))))
+		 (t (format *STANDARD-OUTPUT* "Field (class): 
+		 	field ~a found in this class (~a)~%" 
+			field-name 
+			instance)))))
+  (if (is-class instance)
       T
       (cadr (find
 	     (car (list field-name))
-	     (nth 2 class-name) :test #'member))))
+	     (nth 2 instance) :test #'member))))
 
 ;;; Rappresenta un istanza di una classe
 (defun instance-rapresentation (class-name fields)
@@ -240,7 +282,8 @@
 ;;; field del genitore successivo nella parents-list della classe corrente
 	    (get-complete-parents-fields (cdr parents-list))
 ;;; field del genitore (del genitore corrente) della classe corrente
-	    (get-complete-parents-fields (nth 1 (get-class-spec (car parents-list)))))))
+	    (get-complete-parents-fields 
+		 	(nth 1 (get-class-spec (car parents-list)))))))
 
 ;;; Restituisce una lista di attributi completi (nome valore tipo) della classe
 (defun get-complete-class-fields (class-fields)
@@ -257,27 +300,42 @@
        (fields-from-parents-on-field list-of-total-fields (car fields-from-make))
        (cdr fields-from-make))
       (list-formatting-for-make list-of-total-fields)))
-;;;Restituisce la lista data in cui a ogni sottolista è stato eliminato il terzo elemento.
+;;; Elimina il terzo elemento da ogni sottolista della lista passata
 (defun list-formatting-for-make (list-def-class-format)
   (mapcar #'(lambda (sublist) (subseq sublist 0 2)) list-def-class-format))
 
 (defun fields-from-parents-on-field (list-of-total-fields field-from-make)
   (when field-from-make
-    (format *STANDARD-OUTPUT* "Ffpof: checking ~a in ~a~%" (car field-from-make) list-of-total-fields)
-    (cond ((member (car field-from-make) (get-fields-name-of-class list-of-total-fields))
-	   (format *STANDARD-OUTPUT* "Ffpof: ~a is a member of ~a -(list of the fields' name from the tree of the class)~%"
+    (format *STANDARD-OUTPUT* "Ffpof: 
+	 	checking ~a in ~a~%" 
+	 	(car field-from-make) list-of-total-fields)
+    (cond (
+		(member 
+			(car field-from-make) 
+			(get-fields-name-of-class list-of-total-fields))
+	   (format *STANDARD-OUTPUT* "Ffpof: 
+			~a is a member of ~a ~%"
 		   (car field-from-make)
 		   (get-fields-name-of-class list-of-total-fields))
-	   (format *STANDARD-OUTPUT* "Ffpof: checking type matching (or subtype) between ~a and ~a~%"
-		   (cadr field-from-make) (caddr (find (car field-from-make) list-of-total-fields :test #'member)))
+	   (format *STANDARD-OUTPUT* "Ffpof: 
+			checking type matching (or subtype) between ~a and ~a~%"
+		   (cadr field-from-make) 
+			(caddr 
+				(find 
+					(car field-from-make) 
+					list-of-total-fields :test #'member)))
 	   (cond ((subtypep (type-of(cadr field-from-make))
-			    (caddr (find (car field-from-make) list-of-total-fields :test #'member)))
+			    (caddr 
+				 	(find 
+				 		(car field-from-make) 
+						list-of-total-fields :test #'member)))
 		  (format *STANDARD-OUTPUT* "Ffpof: fields match~%"))
 		 (t
 		  (error
 		   (format
 		    nil
-		    "Ffpof: field type ~a in make does not match its definition in def-class (~a) or is not a subtype"
+		    "Ffpof: 
+			field type ~a in make does not match its definition in def-class (~a)"
 		    (cadr field-from-make)
 		    (caddr (find
 			    (car field-from-make)
@@ -290,18 +348,21 @@
 
 ;;;Restituisce la lista di liste senza le liste che contengono l'atomo dato.
 (defun remove-atom (atom-to-remove list-of-lists)
-  (remove-if #'(lambda (sublist) (member atom-to-remove sublist)) list-of-lists))
+  (remove-if #'(lambda (sublist) 
+	(member atom-to-remove sublist)) list-of-lists))
 
 (defun remove-duplicated-elements (list-of-lists)
-  (let ((new-list '())
-	(existing-names '()))
-    (dolist (sublist list-of-lists)
-      (let ((nome (car sublist)))
-	(if (not (member nome existing-names :test #'equal))
-	    (progn
-	      (setq existing-names (cons nome existing-names))
-              (setq new-list (cons sublist new-list))))))
-    (nreverse new-list)))
+	(let ((new-list '())
+			(existing-names '()))
+		(dolist 
+			(sublist list-of-lists)
+      	(let ((nome (car sublist)))
+				(if 
+					(not (member nome existing-names :test #'equal))
+	    			(progn
+	      			(setq existing-names (cons nome existing-names))
+              		(setq new-list (cons sublist new-list))))))
+    	(nreverse new-list)))
  
 ;;;ottengo i nomi dei campi contenuti in fields (per le istanza)
 (defun get-fields-name (fields)
@@ -310,15 +371,21 @@
 
 ;;;ottengo i nomi dei campi della classe (presenti in def-class)
 (defun get-fields-name-of-class (class-fields)
-  (when class-fields (cons (caar class-fields) (get-fields-name-of-class (cdr class-fields)))))
+  (when class-fields 
+  	(cons 
+		(caar class-fields) 
+		(get-fields-name-of-class (cdr class-fields)))))
 
 (defun get-parents-field (parents-list)
   (when parents-list
-    (append (get-fields-name-of-class (cdr (nth 2 (get-class-spec (car parents-list)))))
-	    (get-parents-field (cdr parents-list)))))
+    (append 
+	 	(get-fields-name-of-class 
+			(cdr (nth 2 (get-class-spec (car parents-list)))))
+	   (get-parents-field (cdr parents-list)))))
 
 (defun get-parents (parents field-name)
-  (unless (field* (car parents) field-name)(get-parents (cdr parents) field-name)))
+  (unless 
+  	(field* (car parents) field-name)(get-parents (cdr parents) field-name)))
 
 ;;;METHOD
 (defun method* (class-name field-name)
@@ -340,58 +407,95 @@
             (get-parents-method (cdr parents) method-name)))
       nil))
 
-;;;  (when class-fields (cons (caar class-fields) (get-fields-name-of-class (cdr class-fields))))
+
 (defun is-method (class-name method-name)
-	
 	(cond
 		(
 			(not (is-class class-name))
 			(cond
-				((or (atom class-name) (not (listp class-name)) (not (eql 'OOLINST (car class-name)))) 
-					(error (format nil "pippo")))
+				((or 
+					(atom class-name) 
+					(not (listp class-name)) 
+					(not (eql 'OOLINST (car class-name)))) 
+					(error (format nil "")));;; FINISCI DI SCRIVERE
 				(T 
-					(format *STANDARD-OUTPUT* "Is-method: Checking ~a in class of ~a~%" method-name class-name)
-					(cond 	(	(or 
-									(null (nth 3 (get-class-spec (nth 1 class-name))))
-									(not (member method-name (get-fields-name-of-class (cdr (nth 3 (get-class-spec (nth 1 class-name)))))))
-								)
-								(format *STANDARD-OUTPUT* "Is-method: method ~a not found in this class (~a), Checking in parents...~%" method-name (nth 1 class-name))
-								(cond 	(	
-											(null 	(cadr (get-class-spec (nth 1 class-name))))
-											(error 	(format nil "Is-method: This class has no parents so method ~a does not exist!~%" method-name))
-										)
-										(T  (get-parents-method (cadr (get-class-spec (nth 1 class-name))) method-name))
-								)
-							)
-							(T (cdr (assoc method-name (cdr (nth 3 (get-class-spec (nth 1 class-name)))))))
-					)
-				)
-			)
-		)
+					(format *STANDARD-OUTPUT* "Is-method: 
+						Checking ~a in class of ~a~%" 
+						method-name 
+						class-name)
+					(cond ((or 
+								(null (nth 3 (get-class-spec (nth 1 class-name))))
+								(not 
+									(member method-name 
+										(get-fields-name-of-class 
+											(cdr 
+												(nth 3 
+													(get-class-spec 
+														(nth 1 class-name))))))))
+							(format *STANDARD-OUTPUT* 
+								"Is-method: 
+								method ~a not found in this class (~a).
+								Checking in parents...~%" 
+								method-name 
+								(nth 1 class-name))
+							(cond (	
+								(null (cadr (get-class-spec (nth 1 class-name))))
+									(error 
+										(format nil 
+											"Is-method: 
+											Class has no parents.
+											Method ~a does not exist!~%"
+											method-name)))
+									(T (get-parents-method 
+											(cadr 
+												(get-class-spec 
+													(nth 1 class-name))) method-name))))
+							(T (cdr 
+								(assoc 
+									method-name 
+									(cdr 
+										(nth 3 
+											(get-class-spec (nth 1 class-name)))))))))))
 		(T 
-			(format *STANDARD-OUTPUT* "Is-method (class): Checking ~a in class ~a~%" method-name class-name)
-			(cond 	(
-						(not (member method-name (get-fields-name-of-class (cdr (nth 3 (get-class-spec class-name))))))
-						(format *STANDARD-OUTPUT* "Is-method: method ~a not found in this class (~a), Checking in parents...~%" method-name class-name)
-						(cond 	(
-									(null (cadr (get-class-spec class-name)))
-									(error (format nil "Is-method: This class has no parents so method ~a does not exist!~%" method-name))
-								)
-								(T  (get-parents-method (cadr (get-class-spec class-name)) method-name))
-						)
-					)
-					(T (cdr (assoc method-name (cdr (nth 3 (get-class-spec class-name))))))
-		 	)
-		)
-	)
-)
+			(format *STANDARD-OUTPUT* 
+			"Is-method (class): 
+			Checking ~a in class ~a~%"
+			method-name 
+			class-name)
+			(cond (
+					(not 
+						(member 
+							method-name 
+								(get-fields-name-of-class 
+									(cdr (nth 3 (get-class-spec class-name))))))
+					(format *STANDARD-OUTPUT* 
+						"Is-method: 
+						method ~a not found in this class (~a).
+						Checking in parents...~%"
+						method-name 
+						class-name)
+					(cond (
+								(null (cadr (get-class-spec class-name)))
+								(error 
+									(format nil 
+										"Is-method: 
+										Class has no parents.
+										Method ~a does not exist!~%"
+										method-name)))
+								(T  
+									(get-parents-method 
+										(cadr 
+											(get-class-spec class-name)) 
+										method-name))))
+					(T (cdr 
+							(assoc method-name 
+								(cdr 
+									(nth 3 (get-class-spec class-name))))))))))
 
 (defun rewrite-method-code (method-name method-spec)
 	(cons 'lambda (cons 
 		(cons 'this (car method-spec))
-		(cdr method-spec)
-	))
-)
+		(cdr method-spec))))
 
 (defun process-method (method-name method-spec)
 	(setf (fdefinition method-name)
@@ -402,7 +506,8 @@
 ;;; Controllo se il tipo specificato è valido  
 (defun valid-field-type (field-type)
 	(if 
-		(or (equal field-type 'number)
+		(or 
+			(equal field-type 'number)
 			(equal field-type 'integer)
 			(equal field-type 'string)
 			(equal field-type 'list)
@@ -413,52 +518,46 @@
 			(is-class field-type)
 		)
 		T
-		(error (format nil "Valid-field-type: ~a is not a Common-Lisp type or an existing class" field-type))
-	)
-)
+		(error 
+			(format nil 
+			"Valid-field-type: 
+			~a is not a Common-Lisp type or an existing class" field-type))))
 
 ;;; Controllo ereditarietà del campo
 (defun is-inherited (parents current-field)
-	(if (and 
+	(if 
+		(and 
 			(not (null parents))
 			(member 
 				(car current-field)
-				(get-fields-name-of-class (get-complete-parents-fields parents))
-			)
+				(get-fields-name-of-class (get-complete-parents-fields parents)))
 			(not (subtypep 
 					(caddr current-field)
 					(caddr (find 
 								(car current-field) 
-								(get-complete-parents-fields parents) :test #'member)))
-			)
-		)					
-		(error  (format nil "Is-inherited: value ~a of field ~a is not a subtype of ~a"
+								(get-complete-parents-fields parents) 
+								:test #'member)))))					
+		(error  (format nil 
+						"Is-inherited: 
+						value ~a of field ~a is not a subtype of ~a"
 					(cadr current-field) (car current-field)
 					(caddr
 						(find
 					  		(car current-field)
-					  		(get-complete-parents-fields parents) :test #'member
-						)
-					)
-				)
-		)
-		T
-	)
-)
+					  		(get-complete-parents-fields parents) :test #'member))))
+		T))
 
 ;;; Controllo se il valore del campo coincide con il tipo specificato
 (defun type-matching (current-field)
 	(if (typep (cadr current-field) (caddr current-field))
 		T
 		(error
-			(format nil "Type-matching: value ~a of field ~a is not of the type specified (~a)"
+			(format nil 
+				"Type-matching: 
+				value ~a of field ~a is not of the type specified (~a)"
 				(cadr current-field) 
-				(car current-field) 
-				(caddr current-field)
-			)
-		)
-	)
-)
+				(car current-field)
+				(caddr current-field)))))
 
 ;;; Verifico se una lista contiene duplicati
 (defun contains-duplicates (lista)
