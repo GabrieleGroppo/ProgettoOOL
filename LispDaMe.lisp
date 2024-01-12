@@ -12,54 +12,51 @@
 
 ;;; Definisce la struttura di una classe e la memorizza
 (defun def-class (class-name parents &rest parts)
-;;; Controlli per eventuali valori imprevisti
+  ;; Controlli per eventuali valori imprevisti
   (cond ((not (atom class-name))
-	 (error (format nil "Def-class: 
-	 unable to create the class -> ~a is not an atom" class-name)))
-	((equal class-name '())
-	 (error
-	  (format nil
-	   "Def-class: 
-		unable to create the class -> ~a is an empty list"
-	   class-name)))
-	((null class-name)
-	 (error
-	  (format nil
-		  "Def-class: 
-		  	unable to create the class -> ~a is NULL"
-		  class-name)))
-	((not (listp parents))
-	 (error
-	  (format nil
-		  "Def-class: 
-		  unable to create the class -> ~a is an not a list"
-		  parents)))
-	((is-class class-name)
-	 (error
-	  (format nil
-		  "Def-class: 
-		  unable to create the class -> ~a already exists"
-		  class-name)))
-	((and parents
-	      (not (null (member nil (mapcar #'is-class parents)))))
-	 (error
-	  (format nil
-		  "Def-class: 
-		  fail to create the class: specified parents are not existing classes"))
-	)
-	((member class-name parents)
-	 (error
-	  (format nil
-		  "Def-class: 
-		  unable to create: the class ~a is also present in its parents' list ~a"
-		  class-name parents))))
+         (error (format nil 
+          "Def-class: 
+          unable to create the class -> ~a is not an atom" 
+          class-name)))
+        ((equal class-name '())
+         (error (format nil 
+          "Def-class: 
+          unable to create the class -> ~a is an empty list"
+          class-name)))
+        ((null class-name)
+         (error (format nil 
+          "Def-class: 
+          unable to create the class -> ~a is NULL" 
+          class-name)))
+        ((not (listp parents))
+         (error (format nil 
+          "Def-class: 
+          unable to create the class -> ~a is not a list" 
+          parents)))
+        ((is-class class-name)
+         (error (format nil 
+          "Def-class: 
+          unable to create the class -> ~a already exists" 
+          class-name)))
+        ((and parents
+              (not (null (member nil (mapcar #'is-class parents)))))
+         (error (format nil 
+          "Def-class: 
+          specified parents are not existing classes")))
+        ((member class-name parents)
+         (error (format nil 
+          "Def-class: 
+          unable to create the class. 
+          The class ~a is also present in its parents' list ~a"
+          class-name parents))))
   (parent* class-name parents)
-;;; Creazione della classe
+  ;; Creazione della classe
   (add-class-spec class-name
-		  (append (list class-name)
-			  (append (list parents)
-				  (parts-structure parents parts))))
+                  (append (list class-name)
+                          (append (list parents)
+                                  (parts-structure parents parts))))
   class-name)
+
 
 ;;; Recupera la lista dei parent della classe
 (defun get-class-parents (class-name)
