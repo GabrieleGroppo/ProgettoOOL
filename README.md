@@ -302,28 +302,11 @@ creando coppie (attributo valore) e la restituisce.
 ### funzioni supportate
 - __FIELDS-FROM-PARENTS__
 
-## GET-FIELDS-NAME
+## FIELDS-FROM-PARENTS-ON-FIELD
 
-__SINTASSI:
-'(' get-fields-name \<fields\> ')'__
+__SINTASSI 
+'(' fields-from-parents-on-field \<list-of-total-fields\>* \<field-from-make\> ')'__
 
-Restituisce i nomi dei campi contenuti nella lista *fields*, che rappresenta gli attributi di un'istanza. La lista restituita conterrà i nomi dei campi in un formato leggibile.
-
-### funzioni supportate
-- __MAKE__
-
-## GET-FIELDS-NAME-OF-CLASS
-
-__SINTASSI: 
-'(' get-fields-name-of-class \<class-fields\> ')'__
-
-
-Restituisce i nomi dei campi della classe, estratti dalla lista *class-fields*, che rappresenta la definizione della classe. La lista restituita conterrà i nomi dei campi in un formato leggibile.
-
-### funzioni supportate
-
-<<<<<<< Updated upstream
-=======
 Notare che *field-from-make* è il nome di un attributo inizializzato dall'istanza.
 Controlla che *field-from-make* sia un __sottotipo__ del tipo indicato nella 
 definizione della classe alla quale esso appartiene. 
@@ -356,4 +339,25 @@ primo elemento un atomo è presente una volta sola.
 
 ### funzioni supportate
 - __INSTANCE-RAPRESENTATION__
->>>>>>> Stashed changes
+
+## GET-FIELDS-NAME
+
+__SINTASSI:
+'(' get-fields-name \<fields\>* ')'__
+
+Restituisce i nomi dei campi contenuti nella lista *fields*, che rappresenta gli attributi di un'istanza. La lista restituita conterrà i nomi dei campi in un formato leggibile.
+
+### funzioni supportate
+- __MAKE__
+
+## GET-FIELDS-NAME-OF-CLASS
+
+__SINTASSI: 
+'(' get-fields-name-of-class \<class-fields\>* ')'__
+
+
+Restituisce i nomi dei campi della classe, estratti dalla lista *class-fields*, che rappresenta la definizione della classe. La lista restituita conterrà i nomi dei campi in un formato leggibile.
+
+### funzioni supportate
+
+
