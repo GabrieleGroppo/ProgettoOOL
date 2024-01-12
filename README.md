@@ -301,14 +301,23 @@ creando coppie (attributo valore) e la restituisce.
 ### funzioni supportate
 - __FIELDS-FROM-PARENTS__
 
-## FIELDS-FROM-PARENTS-ON-FIELD
+## GET-FIELDS-NAME
 
 __SINTASSI:
-'(' fields-from-parents-on-field \<list-of-toatal-fields\>* \<field-from-make\> 
-')'__
+'(' get-fields-name \<fields\> ')'__
 
-Notare che *field-from-make* è il nome di un attributo inizializzato dall'istanza.
-Controlla che *field-from-make* sia un __sottotipo__ del tipo indicato nella 
-definizione della classe alla quale esso appartiene. 
-- __il controllo termina con esito positivo__: *field-from-make* viene rimosso
-da  
+Restituisce i nomi dei campi contenuti nella lista *fields*, che rappresenta gli attributi di un'istanza. La lista restituita conterrà i nomi dei campi in un formato leggibile.
+
+### funzioni supportate
+- __MAKE__
+
+## GET-FIELDS-NAME-OF-CLASS
+
+__SINTASSI: 
+'(' get-fields-name-of-class \<class-fields\> ')'__
+
+
+Restituisce i nomi dei campi della classe, estratti dalla lista *class-fields*, che rappresenta la definizione della classe. La lista restituita conterrà i nomi dei campi in un formato leggibile.
+
+### funzioni supportate
+

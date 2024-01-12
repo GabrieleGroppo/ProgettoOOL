@@ -16,38 +16,38 @@
   (cond ((not (atom class-name))
          (error (format nil 
           "Def-class: 
-          unable to create the class -> ~a is not an atom" 
+          unable to create the class -> ~a is not an atom~%" 
           class-name)))
         ((equal class-name '())
          (error (format nil 
           "Def-class: 
-          unable to create the class -> ~a is an empty list"
+          unable to create the class -> ~a is an empty list~%"
           class-name)))
         ((null class-name)
          (error (format nil 
           "Def-class: 
-          unable to create the class -> ~a is NULL" 
+          unable to create the class -> ~a is NULL~%" 
           class-name)))
         ((not (listp parents))
          (error (format nil 
           "Def-class: 
-          unable to create the class -> ~a is not a list" 
+          unable to create the class -> ~a is not a list~%" 
           parents)))
         ((is-class class-name)
          (error (format nil 
           "Def-class: 
-          unable to create the class -> ~a already exists" 
+          unable to create the class -> ~a already exists~%" 
           class-name)))
         ((and parents
               (not (null (member nil (mapcar #'is-class parents)))))
          (error (format nil 
           "Def-class: 
-          specified parents are not existing classes")))
+          specified parents are not existing classes~%")))
         ((member class-name parents)
          (error (format nil 
           "Def-class: 
           unable to create the class. 
-          The class ~a is also present in its parents' list ~a"
+          The class ~a is also present in its parents' list ~a~%"
           class-name parents))))
   (parent* class-name parents)
   ;; Creazione della classe
@@ -67,7 +67,8 @@
   (cond
     ((null (get-class-parents class-name)) nil)
     ((member searched-class-name (get-class-parents class-name))
-     (error (format nil "Def-class: A class cannot be anchestor of itself.")))
+     (error (format nil "Def-class: 
+	 A class cannot be anchestor of itself.~%")))
     (T (parent* searched-class-name (get-class-parents class-name)))))
 
 ;;; Ricerca un parent in una lista di parent
@@ -92,16 +93,16 @@
 ;;; Definisce la struttura degli attributi e dei metodi 
 (defun parts-structure (parents parts)
   (if (= (list-length parts) 0)
-      (error (format nil "parts-structure: list-length is equal to zero"))
+      (error (format nil "parts-structure: list-length is equal to zero~%"))
       (cons
        (fields-structure parents (car parts))
-		 (list (methods-structure parents (cadr parts))))))
+		 (list (methods-structure (cadr parts))))))
 
 ;;; Definisce la struttura dei campi
 (defun fields-structure (parents fields)
   	(when fields
 		(if (contains-duplicates (get-fields-name-of-class (cdr fields)))
-			(error (format nil "fields-structure: duplicated fields detected"))
+			(error (format nil "fields-structure: duplicated fields detected~%"))
 			(cons
 				(field-definition parents (car fields))
 				(fields-structure parents (cdr fields))))))
@@ -127,17 +128,17 @@
 							(caddr current-field))))))))
 
 ;;; Definisce la struttura dei metodi
-(defun methods-structure (parents methods)
+(defun methods-structure (methods)
 	(when methods
 		(if (contains-duplicates (get-fields-name-of-class (cdr methods)))
 			(error (format nil "methods-structure: 
-			duplicated methods detected"))
+			duplicated methods detected~%"))
 			(cons
-				(method-definition parents (car methods))
-				(methods-structure parents (cdr methods))))))
+				(method-definition (car methods))
+				(methods-structure (cdr methods))))))
 
 ;;; Controlla la validità di un metodo
-(defun method-definition (parents current-method)
+(defun method-definition (current-method)
 	 (cond 
 	 	((equal 'methods current-method) 'methods)
 		(T 
@@ -145,19 +146,19 @@
 				(
 					(not (listp current-method)) 
 					(error (format nil "method-definition: 
-					the method is not a list")))
+					the method is not a list~%")))
 				(
 					(null (car current-method)) 
 					(error (format nil "method-definition: 
-					method-name is null")))
+					method-name is null~%")))
 				(
 					(not (symbolp (car current-method))) 
 					(error (format nil "method-definition: 
-					method-name is not a symbol")))
+					method-name is not a symbol~%")))
 				(
 					(not (listp (cadr current-method))) 
 					(error (format nil "method-definition: 
-					method body is not a list"))))
+					method body is not a list~%"))))
 			(list (car current-method) 
 					(cadr current-method) 
 					(caddr current-method))
@@ -167,9 +168,9 @@
 ;;; Crea una nuova istanza di una classe
 (defun make (class-name &rest fields)
   (cond ((null class-name)
-	 (error (format nil "Make: class-name is NULL")))
+	 (error (format nil "Make: class-name is NULL~%")))
 	((not (is-class class-name))
-	 (error (format nil "Make: class ~a not found" class-name)))
+	 (error (format nil "Make: class ~a not found~%" class-name)))
 	(T (field* class-name (get-fields-name fields))))
   (instance-rapresentation class-name fields))
 
@@ -193,12 +194,12 @@
 			   (not (listp instance)))
 		       (error 
 				 	(format nil "Field (instance): 
-						~a is not a class or an instance" 
+						~a is not a class or an instance~%" 
 						instance)))
 		      ((not (eql 'OOLINST (car instance)))
 		       (error 
 				 	(format nil "Field (instance): 
-					~a is not a class or an instance" 
+					~a is not a class or an instance~%" 
 				 	instance)))))
 	       ((eql 'OOLINST (car instance))
 		(format *STANDARD-OUTPUT* "Field (instance): 
@@ -332,7 +333,7 @@
 		   (format
 		    nil
 		    "Ffpof: 
-			field type ~a in make does not match its definition in def-class (~a)"
+			field type ~a in make does not match its definition in def-class (~a)~%"
 		    (cadr field-from-make)
 		    (caddr (find
 			    (car field-from-make)
@@ -340,7 +341,7 @@
 	  (t(error
 	     (format
 	     nil
-	     "Ffpof - FATAL ERROR: THIS INSTANCE CONTAINS NOT-DEFINED FIELDS!"))))
+	     "Ffpof - FATAL ERROR: THIS INSTANCE CONTAINS NOT-DEFINED FIELDS!~%"))))
     (remove-atom (car field-from-make) list-of-total-fields)))
 
 ;;;Restituisce la lista di liste senza le liste che contengono l'atomo dato.
@@ -490,6 +491,7 @@
 									(nth 3 (get-class-spec class-name))))))))))
 
 (defun rewrite-method-code (method-name method-spec)
+	(format *STANDARD-OUTPUT* "Rewriting method ~a code... ~%" method-name)
 	(cons 'lambda (cons 
 		(cons 'this (car method-spec))
 		(cdr method-spec))))
