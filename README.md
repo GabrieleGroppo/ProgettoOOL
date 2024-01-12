@@ -78,7 +78,8 @@ Restituisce T se lo trova, altrimenti viene lanciato un errore.
 controlla che l'attributo *field-name* sia presente nella struttura dell'oggetto.
 Assicuratosi che *instance* sia un oggetto:
 
--se trova l'attributo, restituisce il valore associato a quest'ultimo all'interno della struttura dell'oggetto
+-se trova l'attributo, restituisce il valore associato a quest'ultimo all'interno 
+della struttura dell'oggetto
 
 -altrimenti viene lanciato un errore
 
@@ -321,3 +322,38 @@ Restituisce i nomi dei campi della classe, estratti dalla lista *class-fields*, 
 
 ### funzioni supportate
 
+<<<<<<< Updated upstream
+=======
+Notare che *field-from-make* è il nome di un attributo inizializzato dall'istanza.
+Controlla che *field-from-make* sia un __sottotipo__ del tipo indicato nella 
+definizione della classe alla quale esso appartiene. 
+- __il controllo termina con esito positivo__: *field-from-make* viene rimosso
+da *list-of-total-fields* poichè rappresenta una ridefinizione corretta dello 
+stesso.
+- __il controllo termina con esito negativo__: viene lanciato un errore.
+
+### funzioni supportate
+- __FIELDS-FROM-PARENTS__
+
+## REMOVE-ATOM
+
+__SINTASSI:
+'(' remove-atom \<atom-to-remove\> \<list-of-lists\>* ')'
+
+Restituisce la lista *list-of-lists* alla quale sono state rimosse tutte le 
+sottoliste che hanno *atom-to-remove* come primo elemento.
+
+### funzioni supportate 
+- __FIELDS-FROM-PARENTS-ON-FIELD__
+
+## REMOVE-DUPLICATED-ELEMENTS 
+
+__SINTASSI:
+'(' remove-duplicated-elements \<list-of-lists\>* ')'
+
+Restituisce la lista *list-of-lists* nella quale ogni sottolista che ha come
+primo elemento un atomo è presente una volta sola.
+
+### funzioni supportate
+- __INSTANCE-RAPRESENTATION__
+>>>>>>> Stashed changes
