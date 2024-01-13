@@ -90,7 +90,10 @@ __SINTASSI:
 
 Premesso che *field-name* è la lista delle coppie (attributo valore) nella 
 struttura dell'oggetto, chiama la funzione __FIELD__ su ogni coppia di 
-*field-name*
+*field-name*. Restituisce:
+- __vero__ se tutti gli attributi in *field-name* sono presenti in *instance*
+- __errore__ se anche uno solo degli attributi in *field-name* __non__ è 
+presente in *instance* 
 
 # funzioni di supporto
 
@@ -99,10 +102,22 @@ struttura dell'oggetto, chiama la funzione __FIELD__ su ogni coppia di
 __SINTASSI:
 '(' get-class-parents \<class-name\> ')'__
 
-Restituisce la lista delle superclassi di *class_name*
+Restituisce la lista *parents* di *class_name*
 
 ### funzioni supportate
 - __PARENT__
+- __GET-ALL-CLASS-PARENTS__
+
+### GET-ALL-CLASS-PARENTS
+
+__SINTASSI:
+    '(' get-all-class-parents \<class-name\> ')'__
+
+Restituisce la lista delle classi appartenenti all'albero delle superclassi di
+*class-name*
+
+### funzioni supportate
+- __IS-INSTANCE__
 
 ## PARENT
 
@@ -340,6 +355,7 @@ primo elemento un atomo è presente una volta sola.
 ### funzioni supportate
 - __INSTANCE-RAPRESENTATION__
 
+
 ## GET-FIELDS-NAME
 
 __SINTASSI:
@@ -355,9 +371,274 @@ Restituisce i nomi dei campi contenuti nella lista *fields*, che rappresenta gli
 __SINTASSI: 
 '(' get-fields-name-of-class \<class-fields\>* ')'__
 
-
 Restituisce i nomi dei campi della classe, estratti dalla lista *class-fields*, che rappresenta la definizione della classe. La lista restituita conterrà i nomi dei campi in un formato leggibile.
 
 ### funzioni supportate
+- __IS-METHOD__
+- __IS-INHERITED__
+- __FIELDS-STRUCTURE__
+- __METHODS-STRUCTURE__
+- __GET-FIELDS-NAME-OF-CLASS__
+- __FIELD__
+- __FIELDS-FROM-PARENTS-ON-FIELD__
+- __GET-PARENTS-FIELDS__
 
+## GET-PARENTS-FIELD
+__SINTASSI: 
+'(' get-parents-field \<class-fields\>* ')'__
 
+Recupera ricorsivamente i nomi dei campi delle classi genitore in una lista di classi genitore e li restituisce in una lista.
+
+### funzioni supportate
+- 
+
+## GET-PARENTS
+__SINTASSI: '(' get-parents-field \<parents\>* \<field-name\>')'__
+
+Ricerca ricorsivamente un campo specifico in una lista di classi genitore e lo restituisce.
+
+### funzioni supportate
+- __FIELD__
+
+## METHOD*
+__SINTASSI: '(' get-parents-field \<class-name\> \<field-name\>')'__
+
+Ricerca ricorsivamente la presenza di un metodo in una classe specifica e con un nome di campo specifico e lo restituisce.
+
+### funzioni supportate
+- __GET-PARENTS-METHOD__
+
+## GET-PARENTS-METHOD
+__SINTASSI: '(' get-parents-method \<parents\>* \<method-name\>')'__
+
+Ricerca ricorsivamente la presenza di un metodo in una lista di classi genitore e lo restituisce.
+
+### funzioni supportate
+- __IS-METHOD__
+
+## IS-METHOD
+__SINTASSI: '(' is-method \<class-name\> \<method-name\>')'__
+
+Verifica ricorsivamente la presenza di un metodo in una classe specifica o nelle sue classi genitore.
+### funzioni supportate
+- __PROCESS-METHOD__
+- __METHOD*__
+
+## REWRITE-METHOD-CODE
+__SINTASSI: '(' rewrite-method-code \<method-name\> \<method-spec\>*')'__
+
+Riscrive il codice di un metodo specifico, restituendo una nuova specifica di metodo.
+### funzioni supportate
+- __PROCESS-METHOD__
+
+## PROCESS-METHOD
+__SINTASSI: '(' rewrite-method-code \<method-name\> \<method-spec\>*')'__
+
+Aggiorna la definizione di un metodo, sostituendo la funzione originale con una nuova funzione che richiama il metodo esistente. Inoltre, riscrive il codice del metodo usando la funzione `rewrite-method-code`.
+
+### funzioni supportate
+- __DEF-CLASS__
+
+## VALID-FIELD-TYPE
+
+## IS-INHERITED
+
+## TYPE-MATCHING
+
+## CONTAINS-DUPLICATES
+
+# test effettuati
+
+## creazione classi
+
+### corrette 
+
+- (def-class 'animal nil '(fields (name "Animal") (surname "Something") 
+     (age 108 integer) (country "Africa")) '(methods (eat ()) (run ())))
+    - ANIMAL
+
+- (def-class 'felix '(animal) '(fields (name "Felix") (children 5 integer))
+    '(methods (eat ())))
+    - FELIX
+
+- (def-class 'cat '(felix) '(fields (food-quantity 7 integer)))
+    - CAT
+
+- (def-class 'person nil '(fields (name "Eve") (age 21 integer)))
+    - PERSON
+
+- (def-class 'student '(person) ‘(fields (name "Eva Lu Ator") 
+(university "Berkeley" string)) '(methods
+(talk (&optional (out *standard-output*))
+    (format out "My name is ~a~%My age is ~d~%" 
+        (field this 'name) (field this 'age)))))
+    - STUDENT
+
+### errate
+
+- (def-class 'person nil '(fields (name "Eve") (age 21 float)))
+    - error: Type-matching: value 21 of field AGE is not of the type specified
+     (FLOAT)
+
+- (def-class 'person '(human) '(fields (name "Eve") (age 21 integer)))
+    - error: Def-class: specified parents are not existing classes
+
+- (def-class 'cat '(felix) '(fields (food-quantity 7 integer) 
+(children 7.8 float)))
+    - error: Is-inherited: value 7.8 of field CHILDREN is not a subtype of INTEGER
+
+- (def-class 'person nil '(fields (name "Eve") (age 21 integer) 
+(name "Person" string)))
+    - error: fields-structure: duplicated fields detected
+
+- (def-class 'animal nil '(fields (name "Animal") (surname "Something") 
+     (age 108 integer) (country "Africa")) '(methods (eat ()) (eat ())))
+    - error: methods-structure: duplicated methods detected
+
+## creazione istanze 
+    data la creazione corretta delle classi
+
+### corrette
+- (defparameter fufi (make 'cat 'name "Fufi" 'age 6))
+    - FUFI
+
+- (defparameter whisky (make 'cat))
+    - WHISKY
+
+- (defparameter alex (make 'student 'name "Alex The Lion" 'age 25 'university
+"Bicocca"))
+    - ALEX
+
+- (defparameter gabriele (make 'student))
+    - GABRIELE
+### errate
+
+- (defparameter fufi (make 'cat 'name "Fufi" 'name "Ciao"))
+    - error: Ffpof: you have tried to initialize the same field more than once!
+
+- (defparameter fufi (make 'cat 'name "Fufi" 'age 107.4))
+    - error: Ffpof: field type 107.4 in make does not match its definition in 
+    its class (INTEGER)
+
+- (defparameter fufi (make 'cat 'name "Fufi" 'age 14 'height 32))
+    - error: Field (class): This class has no parents so field HEIGHT does not 
+    exist!
+
+- (defparameter friedmann (make 'dog))
+    - error: Make: class DOG not found
+
+## is-class e is_istance
+ date le creazioni corrette di classi e istanze
+
+### corretti
+- (is-instance alex T)
+    - T
+
+- (is-instance alex 'person)
+    - T
+
+- (is-instance fufi 'animal)
+    - T
+
+- (is-instance whisky 'felix)
+    - T
+
+### errati
+- (is-instance alex 'felix)
+    - NIL
+
+- (is-instance fufi 'dog)
+    - NIL
+
+- (is-instance whisky 'cat)
+    - NIL 
+
+## metodi
+ date le creazioni corrette di classi e istanze
+
+### corretti
+
+- (talk alex)
+    - My name is Alex The Lion  
+    My age is 25  
+    NIL
+
+- (talk gabriele)
+    - My name is Eva Lu Ator  
+    My age is 21  
+    NIL
+
+### errati
+
+- (talk fufi)
+    - error: Is-method: This class has no parents so method TALK does not exist!
+
+- (talk 45)
+    - error: Is-method: There is something wrong with this method
+
+## field
+ date le creazioni corrette di classi e istanze
+
+### corretti 
+
+- (field gabriele 'name)
+    - "Eva Lu Ator"
+
+- (field alex 'age)
+    - 25
+
+- (field 'person 'age)
+    - T
+
+- (field whisky 'children)
+    - 5
+
+### errati
+
+- (field gabriele 'surname)
+    - error: Field (instance): field SURNAME does not exist in the instance
+(OOLINST STUDENT ((NAME Eva Lu Ator) (UNIVERSITY Berkeley) (AGE 21)))
+
+- (field 'human 'name)
+    - error: Field (instance): HUMAN is not a class or an instance
+
+- (field whisky nil)
+    - error: Field (instance): field-name is NULL
+
+- (field whisky '(name age))
+    - error: Field (instance): field-name is a list
+
+- (field 'person 'children)
+    - error: Field (class): this class has no parents so field CHILDREN does
+    not exist!!
+
+## field*
+ date le creazioni corrette di classi e istanze
+
+### corretti
+
+- (field* 'person '(name age))
+    - T
+
+- (field* whisky '(name children))
+    - T
+
+- (field* 'person 'age) -> nel caso in cui riceva un simbolo, si comporta come 
+__FIELD__
+    - T
+
+I risultati dei test seguenti sono giustificati dalla possibilità di creare
+una istanza senza inizializzare alcun attributo (*fields* è () o nil)
+- (field* 'person ())
+    - T
+
+- (field* 'person nil)
+    - T
+### errati
+
+- (field* 'human '(name age))
+    - error: Field: HUMAN is not a class or an instance
+
+- (field* gabriele '(age name surname))
+    - error: Field (instance): field SURNAME does not exist in the instance
+    (OOLINST STUDENT ((NAME Eva Lu Ator) (UNIVERSITY Berkeley) (AGE 21)))
