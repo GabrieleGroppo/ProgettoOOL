@@ -40,8 +40,8 @@ tipo indicato nella definizione della classe alla quale l'attributo appartiene.
 Nel caso il metodo fosse presente in più classi (nell'albero delle superclassi 
 di *class-name*), viene considerata la sua definizione nella classe 
 "__più vicina__" a *class-name*.
-Se anche questo controllo viene superato con successo, si procede alla creazione 
-dell'oggetto, rappresentato come segue:
+Se anche questo controllo viene superato con successo, si procede alla 
+creazione  dell'oggetto, rappresentato come segue:
     '(' 'OOLINST \<class-name\> (\<field-name\> \<value\>)* ')'
 
 ## IS-CLASS
@@ -75,11 +75,12 @@ Restituisce T se lo trova, altrimenti viene lanciato un errore.
 
 ### *instance* è nome di un oggetto
 
-controlla che l'attributo *field-name* sia presente nella struttura dell'oggetto.
+controlla che l'attributo *field-name* sia presente nella struttura 
+dell'oggetto.
 Assicuratosi che *instance* sia un oggetto:
 
--se trova l'attributo, restituisce il valore associato a quest'ultimo all'interno 
-della struttura dell'oggetto
+-se trova l'attributo, restituisce il valore associato a quest'ultimo 
+all'interno della struttura dell'oggetto
 
 -altrimenti viene lanciato un errore
 
@@ -125,8 +126,8 @@ __SINTASSI:
 '(' parent \<searched-class-name\> \<class-name\> ')'__
 
 Controlla che la classe *class-name* non sia una superclasse delle superclassi
-di *class-name* stesssa. Evita quindi che si formi un ciclo, lanciando un errore
-qualora si creasse. 
+di *class-name* stesssa. Evita quindi che si formi un ciclo, 
+lanciando un errore qualora si creasse. 
 
 ### funzioni supportate
 - __PARENT*__
@@ -182,7 +183,8 @@ Viene creata/analizzata la tripla rappresentata da *current-field*
 - __*current-field* è una coppia -> '(' \<attributo\> \<valore\> ')':__
 *tipo* viene inizializzato con T
 
-- __*current-field* è una tripla -> '(' \<attributo\> \<valore\> \<tipo\> ')':__
+- __*current-field* è una tripla -> 
+'(' \<attributo\> \<valore\> \<tipo\> ')':__
     - se *tipo* non è un tipo primitivo in Common-Lisp o il nome di una classe, 
     viene lanciato un errore (controllo eseguito da __VALID-FIELD-TYPE__)
     - se *valore* non è del tipo indicato da *tipo* viene lanciato un errore
@@ -212,13 +214,15 @@ metodo viene definito più di una volta, viene lanciato un errore
 __SINTASSI:
 '(' method-definition \<current-method\> ')'__
 
-Viene analizzato\creato il metodo corrente. *current-method* è una lista siffatta:
+Viene analizzato\creato il metodo corrente. *current-method* è una 
+lista siffatta:
 - '(' \<method-name\> \<method-args\>* \<method-body\>* ')'
 
 Se le varie parti passano il controllo di correttezza, viene creata la coppia:
 - '(' \<method-name\> '.' \<anonymous-function\>* ')'
 
-*anonymous-function* è la funzione anonima relativa a *method-name* restituita da
+*anonymous-function* è la funzione anonima relativa a *method-name* 
+restituita da
 __PROCESS-METHOD__
 
 ### funzioni supportate
@@ -235,9 +239,9 @@ lista:
 - '(' 'OOLINST \<class-name\> \<fields>* ')'
 
 *fields* è una lista che raccoglie gli attributi provenienti dalle superclassi 
-e che non sono stati inizializzati nell'istanza, oltre ovviamente agli attributi
-inizializzati dalla stessa. Tutto questo salvo errori riguardo tipo, 
-ereditarietà...
+e che non sono stati inizializzati nell'istanza, oltre ovviamente 
+agli attributi inizializzati dalla stessa. 
+Tutto questo salvo errori riguardo tipo, ereditarietà...
 
 ### funzioni supportate
 - __MAKE__
@@ -299,8 +303,8 @@ alcun attributo, quindi viene restituita *list-of-total-fields* così per come �
 - __*field-from-make* contiene attributi:__ l'istanza è stata creata 
 inizializzando parte o tutti gli attributi provenienti dall'albero delle 
 superclassi della classe di appartenenza, quindi viene controllato che ogni
-attributo rispetti la specifica del __tipo__ definita nella classe di appartenenza
-dello stesso
+attributo rispetti la specifica del __tipo__ definita nella classe 
+di appartenenza dello stesso
 
 ### funzioni supportate
 - __INSTANCE-RAPRESENTATION__
@@ -320,9 +324,11 @@ creando coppie (attributo valore) e la restituisce.
 ## FIELDS-FROM-PARENTS-ON-FIELD
 
 __SINTASSI 
-'(' fields-from-parents-on-field \<list-of-total-fields\>* \<field-from-make\> ')'__
+'(' fields-from-parents-on-field \<list-of-total-fields\>* 
+\<field-from-make\>')'__
 
-Notare che *field-from-make* è il nome di un attributo inizializzato dall'istanza.
+Notare che *field-from-make* è il nome di un attributo inizializzato 
+dall'istanza.
 Controlla che *field-from-make* sia un __sottotipo__ del tipo indicato nella 
 definizione della classe alla quale esso appartiene. 
 - __il controllo termina con esito positivo__: *field-from-make* viene rimosso
@@ -361,7 +367,9 @@ primo elemento un atomo è presente una volta sola.
 __SINTASSI:
 '(' get-fields-name \<fields\>* ')'__
 
-Restituisce i nomi dei campi contenuti nella lista *fields*, che rappresenta gli attributi di un'istanza. La lista restituita conterrà i nomi dei campi in un formato leggibile.
+Restituisce i nomi dei campi contenuti nella lista *fields*, che 
+rappresenta gli attributi di un'istanza. 
+La lista restituita conterrà i nomi dei campi in un formato leggibile.
 
 ### funzioni supportate
 - __MAKE__
@@ -371,7 +379,9 @@ Restituisce i nomi dei campi contenuti nella lista *fields*, che rappresenta gli
 __SINTASSI: 
 '(' get-fields-name-of-class \<class-fields\>* ')'__
 
-Restituisce i nomi dei campi della classe, estratti dalla lista *class-fields*, che rappresenta la definizione della classe. La lista restituita conterrà i nomi dei campi in un formato leggibile.
+Restituisce i nomi dei campi della classe, estratti dalla lista *class-fields*, 
+che rappresenta la definizione della classe. 
+La lista restituita conterrà i nomi dei campi in un formato leggibile.
 
 ### funzioni supportate
 - __IS-METHOD__
@@ -383,69 +393,123 @@ Restituisce i nomi dei campi della classe, estratti dalla lista *class-fields*, 
 - __FIELDS-FROM-PARENTS-ON-FIELD__
 - __GET-PARENTS-FIELDS__
 
-## GET-PARENTS-FIELD
-__SINTASSI: 
-'(' get-parents-field \<class-fields\>* ')'__
-
-Recupera ricorsivamente i nomi dei campi delle classi genitore in una lista di classi genitore e li restituisce in una lista.
-
-### funzioni supportate
-- 
-
 ## GET-PARENTS
-__SINTASSI: '(' get-parents-field \<parents\>* \<field-name\>')'__
+__SINTASSI: 
+'(' get-parents-field \<parents\>* \<field-name\>')'__
 
-Ricerca ricorsivamente un campo specifico in una lista di classi genitore e lo restituisce.
+Ricerca ricorsivamente un campo specifico in una lista di classi genitore 
+e lo restituisce.
 
 ### funzioni supportate
 - __FIELD__
 
 ## METHOD*
-__SINTASSI: '(' get-parents-field \<class-name\> \<field-name\>')'__
+__SINTASSI: 
+'(' method* \<class-name\> \<field-name\>')'__
 
-Ricerca ricorsivamente la presenza di un metodo in una classe specifica e con un nome di campo specifico e lo restituisce.
+Ricerca ricorsivamente la presenza di un metodo in una classe specifica e con 
+un nome di campo specifico e lo restituisce.
 
 ### funzioni supportate
 - __GET-PARENTS-METHOD__
 
 ## GET-PARENTS-METHOD
-__SINTASSI: '(' get-parents-method \<parents\>* \<method-name\>')'__
+__SINTASSI: 
+'(' get-parents-method \<parents\>* \<method-name\>')'__
 
-Ricerca ricorsivamente la presenza di un metodo in una lista di classi genitore e lo restituisce.
+Ricerca ricorsivamente la presenza di un metodo in una lista di classi genitore 
+e lo restituisce.
 
 ### funzioni supportate
 - __IS-METHOD__
 
 ## IS-METHOD
-__SINTASSI: '(' is-method \<class-name\> \<method-name\>')'__
+__SINTASSI: 
+'(' is-method \<class-name\> \<method-name\>')'__
 
-Verifica ricorsivamente la presenza di un metodo in una classe specifica o nelle sue classi genitore.
+Verifica ricorsivamente la presenza di un metodo in una classe specifica 
+o nelle sue classi genitore.
 ### funzioni supportate
 - __PROCESS-METHOD__
 - __METHOD*__
 
 ## REWRITE-METHOD-CODE
-__SINTASSI: '(' rewrite-method-code \<method-name\> \<method-spec\>*')'__
+__SINTASSI: 
+'(' rewrite-method-code \<method-name\> \<method-spec\>*')'__
 
-Riscrive il codice di un metodo specifico, restituendo una nuova specifica di metodo.
+Riscrive il codice di un metodo specifico, restituendo una nuova specifica 
+di metodo.
 ### funzioni supportate
 - __PROCESS-METHOD__
 
 ## PROCESS-METHOD
-__SINTASSI: '(' rewrite-method-code \<method-name\> \<method-spec\>*')'__
+__SINTASSI: 
+'(' rewrite-method-code \<method-name\> \<method-spec\>*')'__
 
-Aggiorna la definizione di un metodo, sostituendo la funzione originale con una nuova funzione che richiama il metodo esistente. Inoltre, riscrive il codice del metodo usando la funzione `rewrite-method-code`.
+Aggiorna la definizione di un metodo, sostituendo la funzione originale con una
+ nuova funzione che richiama il metodo esistente. 
+ Inoltre, riscrive il codice del metodo usando la funzione 
+ `rewrite-method-code`.
 
 ### funzioni supportate
 - __DEF-CLASS__
 
 ## VALID-FIELD-TYPE
+__SINTASSI: 
+'(' valid-field-type \<field-type\>')'__
+
+La funzione `valid-field-type` accetta un tipo di dati (`field-type`) e 
+verifica se è un tipo di dati valido in Common Lisp 
+o se rappresenta una classe esistente. 
+Restituisce `T` se il tipo di dati è valido, altrimenti genera un errore 
+con un messaggio dettagliato.
+
+TIPI VALIDI:
+- 'number'
+- 'integer'
+- 'string'
+- 'list'
+- 'float'
+- 'real'
+- 'rational'
+- 'complex'
+
+### funzioni supportate
+- __FIELD-DEFINITION__
 
 ## IS-INHERITED
+__SINTASSI: 
+'(' is-inherited \<parents\>* \<current-field\>')'__
+
+La funzione `is-inherited` accetta una lista di classi (`parents`) e un campo 
+corrente, e verifica se il campo è ereditato da una di queste classi parents. 
+Restituisce `T` se il campo è ereditato correttamente, altrimenti genera 
+un errore con un messaggio dettagliato.
+
+### funzioni supportate
+- __FIELD-DEFINITION__
 
 ## TYPE-MATCHING
+__SINTASSI:
+ '(' type-matching \<current-field\>')'__
+
+La funzione `type-matching` accetta un campo corrente e verifica se il valore 
+associato al campo è del tipo di dati specificato per quel campo. 
+In caso affermativo, la funzione restituirà `T`. 
+In caso contrario, genererà un errore con un messaggio informativo.
+
+### funzioni supportate
+- __FIELD-DEFINITION__
 
 ## CONTAINS-DUPLICATES
+__SINTASSI: 
+'(' contains-duplicates \<list\>*')'__
+
+La funzione `contains-duplicates` accetta una lista come argomento e 
+restituisce `t` se la lista contiene duplicati, altrimenti restituisce `nil`.
+
+### funzioni supportate
+- __METHODS-STRUCTURE__
 
 # test effettuati
 
@@ -485,7 +549,8 @@ Aggiorna la definizione di un metodo, sostituendo la funzione originale con una 
 
 - (def-class 'cat '(felix) '(fields (food-quantity 7 integer) 
 (children 7.8 float)))
-    - error: Is-inherited: value 7.8 of field CHILDREN is not a subtype of INTEGER
+    - error: Is-inherited: value 7.8 of field CHILDREN is not a 
+    subtype of INTEGER
 
 - (def-class 'person nil '(fields (name "Eve") (age 21 integer) 
 (name "Person" string)))
