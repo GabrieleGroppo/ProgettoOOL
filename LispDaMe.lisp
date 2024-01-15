@@ -563,8 +563,8 @@ value ~a of field ~a is not a subtype of ~a"
       T
       (error
        (format nil 
-               "Type-matching: 
-                value ~a of field ~a is not of the type specified (~a)"
+               "Type-matching: ~
+value ~a of field ~a is not of the type specified (~a)"
                (cadr current-field) 
                (car current-field)
                (caddr current-field)))))

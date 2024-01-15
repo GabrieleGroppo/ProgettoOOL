@@ -395,7 +395,7 @@ La lista restituita conterrà i nomi dei campi in un formato leggibile.
 
 ## GET-PARENTS
 __SINTASSI: 
-'(' get-parents-field \<parents\>* \<field-name\>')'__
+'(' get-parents-field \<parents\>* \<field-name\> ')'__
 
 Ricerca ricorsivamente un campo specifico in una lista di classi genitore 
 e lo restituisce.
@@ -405,7 +405,7 @@ e lo restituisce.
 
 ## METHOD*
 __SINTASSI: 
-'(' method* \<class-name\> \<field-name\>')'__
+'(' method* \<class-name\> \<field-name\> ')'__
 
 Ricerca ricorsivamente la presenza di un metodo in una classe specifica e con 
 un nome di campo specifico e lo restituisce.
@@ -415,7 +415,7 @@ un nome di campo specifico e lo restituisce.
 
 ## GET-PARENTS-METHOD
 __SINTASSI: 
-'(' get-parents-method \<parents\>* \<method-name\>')'__
+'(' get-parents-method \<parents\>* \<method-name\> ')'__
 
 Ricerca ricorsivamente la presenza di un metodo in una lista di classi genitore 
 e lo restituisce.
@@ -425,7 +425,7 @@ e lo restituisce.
 
 ## IS-METHOD
 __SINTASSI: 
-'(' is-method \<class-name\> \<method-name\>')'__
+'(' is-method \<class-name\> \<method-name\> ')'__
 
 Verifica ricorsivamente la presenza di un metodo in una classe specifica 
 o nelle sue classi genitore.
@@ -435,7 +435,7 @@ o nelle sue classi genitore.
 
 ## REWRITE-METHOD-CODE
 __SINTASSI: 
-'(' rewrite-method-code \<method-name\> \<method-spec\>*')'__
+'(' rewrite-method-code \<method-name\> \<method-spec\>* ')'__
 
 Riscrive il codice di un metodo specifico, restituendo una nuova specifica 
 di metodo.
@@ -444,10 +444,10 @@ di metodo.
 
 ## PROCESS-METHOD
 __SINTASSI: 
-'(' rewrite-method-code \<method-name\> \<method-spec\>*')'__
+'(' rewrite-method-code \<method-name\> \<method-spec\>* ')'__
 
 Aggiorna la definizione di un metodo, sostituendo la funzione originale con una
- nuova funzione che richiama il metodo esistente. 
+ funzione lambda che richiama il metodo esistente. 
  Inoltre, riscrive il codice del metodo usando la funzione 
  `rewrite-method-code`.
 
@@ -456,11 +456,10 @@ Aggiorna la definizione di un metodo, sostituendo la funzione originale con una
 
 ## VALID-FIELD-TYPE
 __SINTASSI: 
-'(' valid-field-type \<field-type\>')'__
+'(' valid-field-type \<field-type\> ')'__
 
-La funzione `valid-field-type` accetta un tipo di dati (`field-type`) e 
-verifica se è un tipo di dati valido in Common Lisp 
-o se rappresenta una classe esistente. 
+Accetta un tipo di dati (`field-type`) e verifica se è un tipo di dati valido
+in Common Lisp o se rappresenta una classe esistente. 
 Restituisce `T` se il tipo di dati è valido, altrimenti genera un errore 
 con un messaggio dettagliato.
 
@@ -479,10 +478,10 @@ TIPI VALIDI:
 
 ## IS-INHERITED
 __SINTASSI: 
-'(' is-inherited \<parents\>* \<current-field\>')'__
+'(' is-inherited \<parents\>* \<current-field\> ')'__
 
-La funzione `is-inherited` accetta una lista di classi (`parents`) e un campo 
-corrente, e verifica se il campo è ereditato da una di queste classi parents. 
+Accetta una lista di classi (`parents`) e un campo corrente, e verifica se 
+il campo è ereditato da una di queste classi parents. 
 Restituisce `T` se il campo è ereditato correttamente, altrimenti genera 
 un errore con un messaggio dettagliato.
 
@@ -491,22 +490,22 @@ un errore con un messaggio dettagliato.
 
 ## TYPE-MATCHING
 __SINTASSI:
- '(' type-matching \<current-field\>')'__
+ '(' type-matching \<current-field\> ')'__
 
-La funzione `type-matching` accetta un campo corrente e verifica se il valore 
-associato al campo è del tipo di dati specificato per quel campo. 
-In caso affermativo, la funzione restituirà `T`. 
-In caso contrario, genererà un errore con un messaggio informativo.
+Accetta un campo corrente e verifica se il valore associato al campo è del 
+tipo di dati specificato per quel campo. In caso affermativo, la funzione 
+restituirà `T`. In caso contrario, genererà un errore con un messaggio 
+informativo.
 
 ### funzioni supportate
 - __FIELD-DEFINITION__
 
 ## CONTAINS-DUPLICATES
 __SINTASSI: 
-'(' contains-duplicates \<list\>*')'__
+'(' contains-duplicates \<list\>* ')'__
 
-La funzione `contains-duplicates` accetta una lista come argomento e 
-restituisce `t` se la lista contiene duplicati, altrimenti restituisce `nil`.
+accetta una lista come argomento e restituisce `t` se la lista contiene
+duplicati, altrimenti restituisce `nil`.
 
 ### funzioni supportate
 - __METHODS-STRUCTURE__
