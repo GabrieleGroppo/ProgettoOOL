@@ -1,4 +1,10 @@
-;;; ----------------------------------------------------------------------------
+;;; Autori:
+;;; Caputo Lorenzo 894528
+;;; Groppo Gabriele 902238
+;;; _*_ Mode: Lisp _*_
+
+;;; ool.lisp
+
 ;;; Struttura dati per la memorizzazione delle classi
 (defparameter *classes-specs* (make-hash-table))
 
@@ -576,3 +582,4 @@ value ~a of field ~a is not of the type specified (~a)"
     ((member (car lista) (cdr lista)) t)
     (t (contains-duplicates (cdr lista)))))
 
+;;; End of file -- ool.lisp

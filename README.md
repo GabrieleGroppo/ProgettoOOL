@@ -1,3 +1,9 @@
+# Documentazione Progetto - Linguaggi di Programmazione 23/24 - Prolog
+
+Autori:
+- Groppo Gabriele - Matricola 902238 
+- Caputo Lorenzo - Matricola 894528
+
 # introduzione
 Ai tempi di Simula e del primo Smalltalk, molto molto tempo prima di Python, 
 Ruby, Perl e SLDJ, i programmatori Lisp già producevano una pletora di 
