@@ -412,15 +412,15 @@ you have tried to initialize the same field more than once!~%"))))
     (search-field-in-parents (cdr parents) field-name)))
 
 ;;;METHOD
-(defun method* (class-name method-name)
-  (when method-name
-;;;caso in cui method-name sia una lista
-    (cond  ((listp method-name)
-            (is-method class-name (car method-name))
-            (method* class-name (cdr method-name)))
+(defun method* (class-name method-list)
+  (when method-list
+;;;caso in cui method-list
+    (cond  ((listp method-list)
+            (is-method class-name (car method-list))
+            (method* class-name (cdr method-list)))
 ;;;caso in cui method-name sia un atomo
-	   ((atom method-name)
-            (is-method class-name method-name)))))
+	   ((atom method-list)
+            (is-method class-name method-list)))))
 
 ;;;"Restituisce il metodo chiamato method-name dai genitori."
 (defun get-parents-method (parents method-name)

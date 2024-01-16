@@ -1,10 +1,13 @@
+
 # Documentazione Progetto - Linguaggi di Programmazione 23/24 - Lisp
 
 Autori:
-- Groppo Gabriele - Matricola 902238 
+- Groppo Gabriele - Matricola 902238
 - Caputo Lorenzo - Matricola 894528
 
+
 # introduzione
+
 Ai tempi di Simula e del primo Smalltalk, molto molto tempo prima di Python, 
 Ruby, Perl e SLDJ, i programmatori Lisp già producevano una pletora di 
 linguaggi object oriented. Il vostro progetto consiste nella costruzione 
@@ -43,12 +46,12 @@ sui parametri con i quali l'oggetto viene istanziato. In particolare, viene
 controllata l'appartenenza di ogni attributo alla classe indicata (o 
 all'albero delle sue superclassi) e che il valore indicato sia un sottotipo del
 tipo indicato nella definizione della classe alla quale l'attributo appartiene.
-Nel caso il metodo fosse presente in più classi (nell'albero delle superclassi 
+Nel caso l'attributo fosse presente in più classi (nell'albero delle superclassi 
 di `class-name`), viene considerata la sua definizione nella classe 
 "*più vicina*" a `class-name`.
 Se anche questo controllo viene superato con successo, si procede alla 
-creazione  dell'oggetto, rappresentato come segue:\
-    `'(' 'OOLINST <class-name> (<field-name> <value>)* ')'`
+creazione  dell'oggetto, rappresentato come segue:
+-  `'(' 'OOLINST <class-name> <(<field-name> <value>)>* ')'`
 
 ## IS-CLASS
 
@@ -104,11 +107,9 @@ all'interno della struttura dell'oggetto
 ### sintassi:
 - `'(' field* <instance> <field-name>* ')'`
 
-Premesso che `field-name` è una lista di attributi e instance è il nome di una
+Premesso che `field-name` è una lista di attributi e `instance` è il nome di una
 classe o di una istanza, chiama la funzione **FIELD** 
-su ogni attributo di `field-name`.
-
-Restituisce:
+su ogni attributo di `field-name`. Restituisce:
 
 - **vero** se tutti gli attributi in `field-name` sono presenti in `instance`
 - **errore** se anche uno solo degli attributi in `field-name` **non** è 
@@ -154,6 +155,7 @@ Evita quindi che si formi un ciclo, lanciando un errore qualora si creasse.
 
 ### sintassi:
 - `'(' parent* <searched-class-name> <parents>* ')'`
+
 Estende il controllo cominciato da **FIELD** nell'albero delle superclassi di
 `class_name`. 
 
@@ -168,11 +170,32 @@ restituito **T** (esplorazione ovviamente si arresta)
 ## PARTS-STRUCTURE
 
 ### sintassi:
-- `'(' parts-structure <parents> <fields>* ')'`
+- `'(' parts-structure <parents> <parts>* ')'`
 
 Crea la struttura della classe, scomponendo la parte dedicata agli attributi e 
-quella dedicata ai metodi. Viene lanciato un errore se la lista degli attributi
-è nulla
+quella dedicata ai metodi. 
+
+- **`parts` non contiene sottoliste:** 
+    - è stata creata una classe senza definire attributi e metodi. Nella
+    struttura, le parti relative ai campi e ai metodi saranno inizializzate a 
+    **NIL**
+- **`parts` contiene UNA sottolista:**
+    - verifica che la sottolista abbia come primo elemento la parola-chiave 
+    *fields* o *methods*. In caso contrario viene lanciato un errore
+        - a seconda della parola-chiave, viene lanciata **FIELDS-STRUCTURE** o
+        **METHODS-STRUCTURE**, mentre il resto viene memorizzato come **NIL**.
+        - si assicura di memorizzare nella struttura, indipendentemente
+        da quale delle due è stata presentata, prima la parte relativa
+        ai **campi** e poi quella relativa ai **metodi** 
+- **`parts` contiene DUE sottoliste:**
+    - verifica che le due sottoliste abbiano come primo elemento rispettivamente
+    *fields* e *methods* (o viceversa). In caso contrario viene lanciato un
+    errore.
+        - si assicura di lanciare **FIELDS-STRUCTURE** e **METHODS-STRUCTURE**
+        per le rispettive sottoliste
+        - si assicura di memorizzare nella struttura, indipendentemente
+        dall'ordine con le quali sono state presentate, prima la parte relativa
+        ai **campi** e poi quella relativa ai **metodi** 
 
 ### funzioni supportate
 - __DEF-CLASS__
@@ -182,7 +205,9 @@ quella dedicata ai metodi. Viene lanciato un errore se la lista degli attributi
 ### sintassi:
 - `'(' fields-structure <fields>* ')'`
 
-Definisce la struttura della rappresentazione degli attributi della classe
+Definisce la struttura della rappresentazione degli attributi della classe.\
+Se un metodo viene definito più di una volta, viene lanciato un errore.\
+Chiama **FIELD-DEFINITION** per ogni campo per controllarne la correttezza.
 
 ### funzioni supportate
 - __PARTS-STRUCTURE__
@@ -196,16 +221,13 @@ Viene creata/analizzata la tripla rappresentata da `current-field`
 `'(' <attributo> <valore> <tipo> ')'`:
 
 - **`current-field` è una lista da un elemento -> `'(' <attributo> ')'`:**
-    
     - `valore` viene inizializzato con **NIL** 
     - `tipo` viene inizializzato con **T**
 
 - **`current-field` è una coppia -> `'(' <attributo> <valore> ')'`:**
-    
     - `tipo` viene inizializzato con **T**
 
 - **`current-field` è una tripla -> `'(' <attributo> <valore> <tipo> ')'`:**
-    
     - se `tipo` non è un tipo primitivo in Common-Lisp o il nome di una classe, 
     viene lanciato un errore (controllo eseguito da **VALID-FIELD-TYPE**)
     - se `valore` non è del tipo indicato da `tipo` viene lanciato un errore
@@ -226,6 +248,7 @@ Viene creata/analizzata la tripla rappresentata da `current-field`
 
 Definisce la struttura della rappresentazione dei metodi della classe.\
 Se un metodo viene definito più di una volta, viene lanciato un errore
+Chiama **METHOD-DEFINITION** per ogni metodo per controllarne la correttezza.
 
 ### funzioni supportate
 - __PARTS-STRUCTURE__
@@ -355,13 +378,21 @@ creando coppie (attributo valore) e la restituisce.
 <field-from-make>')'`
 
 Notare che `field-from-make` è il nome di un attributo inizializzato 
-dall'istanza.\
-Controlla che `field-from-make` sia un **sottotipo** del tipo indicato nella 
-definizione della classe alla quale esso appartiene. 
+dall'istanza e `list-of-total-fields` ha lo stesso significato attribuitogli
+precedentemente.\
+L'appartenenza di `field-from-make` a `list-of-total-fields` è stata già
+verificata da **FIELD**.\
+Controlla che il valore associato a `field-from-make` sia un **sottotipo** del 
+tipo indicato nella definizione della classe alla quale l'attributo appartiene. 
+
 - **il controllo termina con esito positivo**: 
     - `field-from-make` viene rimosso da `list-of-total-fields` poichè 
     rappresenta una ridefinizione corretta dello stesso.
-- **il controllo termina con esito negativo**: viene lanciato un errore.
+- **il controllo termina con esito negativo**: 
+    - il valore associato a `field-from-make` non è un sottotipo valido, 
+    quindi viene lanciato un errore. 
+    - è stato inizializzato lo stesso attributo più di una volta, quindi viene
+    lanciato un errore
 
 ### funzioni supportate
 - __FIELDS-FROM-PARENTS__
@@ -383,7 +414,8 @@ sottoliste che hanno `atom-to-remove` come primo elemento.
 - `'(' remove-duplicated-elements <list-of-lists>* ')'`
 
 Restituisce la lista `list-of-lists` nella quale ogni sottolista che ha come
-primo elemento un atomo è presente una volta sola.
+primo elemento un atomo è presente una volta sola (non saranno quindi presenti
+sottoliste che hanno lo stesso primo elemento).
 
 ### funzioni supportate
 - __INSTANCE-RAPRESENTATION__
@@ -394,8 +426,8 @@ primo elemento un atomo è presente una volta sola.
 - `'(' get-fields-name <fields>* ')'`
 
 Restituisce i nomi dei campi o dei metodi contenuti nella lista `fields`
-(`methods`), che rappresenta gli attributi di un'istanza. 
-La lista restituita conterrà i nomi dei campi in un formato leggibile.
+(`methods`), che rappresenta gli attributi\metodi di un'istanza. 
+La lista restituita conterrà i nomi dei campi\metodi in un formato leggibile.
 
 ### funzioni supportate
 - __MAKE__
@@ -405,9 +437,9 @@ La lista restituita conterrà i nomi dei campi in un formato leggibile.
 ### sintassi: 
 - `'(' get-fields-name-of-class <class-fields>* ')'`
 
-Restituisce i nomi dei campi della classe, estratti dalla lista `class-fields`, 
-che rappresenta la definizione della classe. 
-La lista restituita conterrà i nomi dei campi in un formato leggibile.
+Restituisce i nomi dei campi\metodi della classe, estratti dalla lista 
+`class-fields`, che rappresenta la definizione della classe. 
+La lista restituita conterrà i nomi dei campi\metodi in un formato leggibile.
 
 ### funzioni supportate
 - __IS-METHOD__
@@ -433,10 +465,16 @@ e lo restituisce.
 ## METHOD*
 
 ### sintassi: 
-- `'(' method* <class-name> <field-name> ')'`
+- `'(' method* <class-name> <method-list> ')'`
 
-Ricerca ricorsivamente la presenza di un metodo in una classe specifica e con 
-un nome di campo specifico e lo restituisce.
+Premesso che `method-list` è una lista di metodi o un solo metodo, 
+lancia **IS-METHOD** per ogni metodo presente.
+
+- Restituisce **T** se ogni metodo in `method-list` è presente in `class-name`
+(nome di una classe) o nelle sue superclassi.
+- Restituisce **T** se ogni metodo in `method-list` è presente nella classe a
+cui appartiene `class-name`(nome di una istanza) o nelle sue superclassi.
+- Altrimenti viene lanciato un errore
 
 ### funzioni supportate
 - __GET-PARENTS-METHOD__
@@ -457,8 +495,24 @@ e lo restituisce.
 ### sintassi: 
 - `'(' is-method <class-name> <method-name> ')'`
 
-Verifica ricorsivamente la presenza di un metodo in una classe specifica 
-o nelle sue classi genitore.
+### `class-name` è il nome di una istanza:
+Verifica che `method-name` sia presente nella classe di appartenenza di 
+`class-name` o, eventualmente, nell'albero delle superclassi della stessa.\
+Verifico inoltre che la sua sintassi sia corretta. Viene lanciato un errore se:
+
+- il metodo viene invocato con dei parametri errati
+- il metodo non è presente nella classe di `class-name` o nell'albero delle 
+superclassi
+
+In caso positivo, invece, restituisce la **funzione anonima** associata ad esso.
+
+### `class-name` è il nome di una classe:
+Verifica che `method-name` sia presente in `class-name` o, eventualmente, 
+nell'albero delle superclassi della stessa. Viene lanciato un errore se:
+
+- il metodo non è presente in `class-name` o nell'albero delle sue superclassi.
+
+In caso positivo, invece, restituisce la **funzione anonima** associata ad esso.
 
 ### funzioni supportate
 - __PROCESS-METHOD__
@@ -470,14 +524,14 @@ o nelle sue classi genitore.
 - `'(' rewrite-method-code <method-name> <method-spec>* ')'`
 
 Riscrive il codice di un metodo specifico, restituendo una nuova specifica 
-di metodo.
+di metodo, che accetta come parametro aggiuntivo **this**.
 
 ### funzioni supportate
 - __PROCESS-METHOD__
 
 ## PROCESS-METHOD
 
-## sintassi: 
+### sintassi: 
 - `'(' rewrite-method-code <method-name> <method-spec>* ')'`
 
 Aggiorna la definizione di un metodo, sostituendo la funzione originale con una
@@ -546,8 +600,11 @@ tipo di dati specificato per quel campo.
 ### sintassi: 
 - `'(' contains-duplicates <list>* ')'`
 
-accetta una lista come argomento e restituisce **T** se la lista contiene
-duplicati, altrimenti restituisce **NIL**.
+accetta una lista come argomento e:
+
+- restituisce **T** se la lista contiene
+duplicati
+- altrimenti restituisce **NIL**.
 
 ### funzioni supportate
 - __METHODS-STRUCTURE__
