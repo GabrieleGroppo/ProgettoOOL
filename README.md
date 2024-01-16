@@ -1,4 +1,4 @@
-# Documentazione Progetto - Linguaggi di Programmazione 23/24 - Prolog
+# Documentazione Progetto - Linguaggi di Programmazione 23/24 - Lisp
 
 Autori:
 - Groppo Gabriele - Matricola 902238 
@@ -20,23 +20,23 @@ codice nei metodi stessi.
 
 ## DEF-CLASS
 
-__SINTASSI:
-'(' def-class \<class-name\> \<parents\> \<parts\>* ')'__
+### sintassi:
+- `'(' def-class <class-name> <parents> <parts>* ')'`
 
 Definisce la struttura di una classe e la memorizza in una hash-table 
-identificata da una variabile globale (*classes-specs*).
+identificata da una variabile globale (`classes-specs`).
 Viene eseguito un insieme di controlli che assicurino la correttezza,
 sotto vari aspetti, della classe che si vuole istanziare. Se non sono
 rilevati errori nella definizione della classe, essa viene aggiunta a
-*classes-specs*, altrimenti viene lanciato un errore
+`classes-specs`, altrimenti viene lanciato un errore
        
 ## MAKE
 
-__SINTASSI:
-'(' make \<class-name\> \<fields\>* ')'__
+### sintassi:
+- `'(' make <class-name> <fields>* ')'`
 
 Effettua la creazione di una nuovo oggetto di una classe.
-Da considerare che *fields* rappresenta una lista di coppie (attributo valore),
+Da considerare che `fields` rappresenta una lista di coppie (attributo valore),
 che rappresentano i parametri con i quali l'oggetto viene creato.
 Se la classe di appartenenza indicata è valida, viene effettuato il controllo 
 sui parametri con i quali l'oggetto viene istanziato. In particolare, viene 
@@ -44,120 +44,131 @@ controllata l'appartenenza di ogni attributo alla classe indicata (o
 all'albero delle sue superclassi) e che il valore indicato sia un sottotipo del
 tipo indicato nella definizione della classe alla quale l'attributo appartiene.
 Nel caso il metodo fosse presente in più classi (nell'albero delle superclassi 
-di *class-name*), viene considerata la sua definizione nella classe 
-"__più vicina__" a *class-name*.
+di `class-name`), viene considerata la sua definizione nella classe 
+"*più vicina*" a `class-name`.
 Se anche questo controllo viene superato con successo, si procede alla 
-creazione  dell'oggetto, rappresentato come segue:
-    '(' 'OOLINST \<class-name\> (\<field-name\> \<value\>)* ')'
+creazione  dell'oggetto, rappresentato come segue:\
+    `'(' 'OOLINST <class-name> (<field-name> <value>)* ')'`
 
 ## IS-CLASS
 
-__SINTASSI:
-'(' is-class \<class-name\> ')'__
+### sintassi:
+- `'(' is-class <class-name> ')'`
 
-controlla che \<class-name\> sia il nome di una classe precedentemente 
-istanziata. 
-Restituisce T se la condizione viene verificata 
+controlla che `class-name` sia il nome di una classe precedentemente 
+istanziata.\
+Restituisce **T** se la condizione viene verificata. 
 
 ## IS-INSTANCE
 
-__SINTASSI:
-'(' is-instance \<value\> [\<class-name\>] ')'__
+### sintassi:
+- `'(' is-instance <value> [<class-name>] ')'`
 
-controlla che *value* sia una istanza di *class-name*. Restituisce T se la 
-condizione viene verificata.
+controlla che `value` sia una istanza di `class-name`. 
+
+- **`class-name` è T:** 
+    - `value` può essere un'istanza qualunque.
+- **`class-name` è una classe:**
+    - `value` deve essere istanza di una classe che ha `class-name` come 
+    superclasse    
+
+Restituisce **T** se la condizione viene verificata.
 
 ## FIELD
 
-__SINTASSI:
-'(' field \<instance\> \<field-name\> ')'__
+### sintassi:
+- `'(' field <instance> <field-name> ')'`
 
-### *instance* è nome di una classe
+### `instance` è nome di una classe
 
-controlla che l'attributo *field-name* appartenga alla classe *instance*. Se
+controlla che l'attributo `field-name` appartenga alla classe `instance`. Se
 non lo trova, effettua la ricerca dell'attributo nell'albero delle superclassi
-di *instance*, fino ad arrivare alla radice. 
-Restituisce T se lo trova, altrimenti viene lanciato un errore.
+di `instance`, fino ad arrivare alla radice.
 
-### *instance* è nome di un oggetto
+- se trova l'attributo, restituisce il valore associato a quest'ultimo 
+all'interno della definizione della classe
+- altrimenti viene lanciato un errore.
 
-controlla che l'attributo *field-name* sia presente nella struttura 
+### `instance` è nome di un oggetto
+
+controlla che l'attributo `field-name` sia presente nella struttura 
 dell'oggetto.
-Assicuratosi che *instance* sia un oggetto:
+Assicuratosi che `instance` sia un oggetto:
 
--se trova l'attributo, restituisce il valore associato a quest'ultimo 
+- se trova l'attributo, restituisce il valore associato a quest'ultimo 
 all'interno della struttura dell'oggetto
-
--altrimenti viene lanciato un errore
+- altrimenti viene lanciato un errore
 
 ## FIELD*
 
-__SINTASSI:
-'(' field* \<instance\> \<field-name\>* ')'
+### sintassi:
+- `'(' field* <instance> <field-name>* ')'`
 
-Premesso che *field-name* è la lista delle coppie (attributo valore) nella 
-struttura dell'oggetto, chiama la funzione __FIELD__ su ogni coppia di 
-*field-name*. Restituisce:
-- __vero__ se tutti gli attributi in *field-name* sono presenti in *instance*
-- __errore__ se anche uno solo degli attributi in *field-name* __non__ è 
-presente in *instance* 
+Premesso che `field-name` è una lista di attributi e instance è il nome di una
+classe o di una istanza, chiama la funzione **FIELD** 
+su ogni attributo di `field-name`.
+
+Restituisce:
+
+- **vero** se tutti gli attributi in `field-name` sono presenti in `instance`
+- **errore** se anche uno solo degli attributi in `field-name` **non** è 
+presente in `instance` 
 
 # funzioni di supporto
 
 ## GET-CLASS-PARENTS
 
-__SINTASSI:
-'(' get-class-parents \<class-name\> ')'__
+### sintassi:
+- `'(' get-class-parents <class-name> ')'`
 
-Restituisce la lista *parents* di *class_name*
+Restituisce la lista `parents` di `class_name`
 
 ### funzioni supportate
 - __PARENT__
 - __GET-ALL-CLASS-PARENTS__
 
-### GET-ALL-CLASS-PARENTS
+## GET-ALL-CLASS-PARENTS
 
-__SINTASSI:
-    '(' get-all-class-parents \<class-name\> ')'__
+### sintassi:
+- `'(' get-all-class-parents <class-name> ')'`
 
 Restituisce la lista delle classi appartenenti all'albero delle superclassi di
-*class-name*
+`class-name`
 
 ### funzioni supportate
 - __IS-INSTANCE__
 
 ## PARENT
 
-__SINTASSI:
-'(' parent \<searched-class-name\> \<class-name\> ')'__
+### sintassi:
+- `'(' parent <searched-class-name> <class-name> ')'`
 
-Controlla che la classe *class-name* non sia una superclasse delle superclassi
-di *class-name* stesssa. Evita quindi che si formi un ciclo, 
-lanciando un errore qualora si creasse. 
+Controlla che la classe `class-name` non sia una superclasse delle superclassi
+di `class-name` stessa.\
+Evita quindi che si formi un ciclo, lanciando un errore qualora si creasse. 
 
 ### funzioni supportate
 - __PARENT*__
 
 ## PARENT*
 
-__SINTASSI:
-'(' parent* \<searched-class-name\> \<parents\>* ')'__
-Estende il controllo cominciato da __FIELD__ nell'albero delle superclassi di
-*class_name*. 
+### sintassi:
+- `'(' parent* <searched-class-name> <parents>* ')'`
+Estende il controllo cominciato da **FIELD** nell'albero delle superclassi di
+`class_name`. 
 
--Se alla fine dell'esplorazione non viene riscontrata alcuna corrispondenza, 
-viene restituito NIL
-
--se viene riscontrata una corrispondenza nel corso dell'esplorazione, viene 
-restituito T (esplorazione ovviamente si arresta)
+- Se alla fine dell'esplorazione non viene riscontrata alcuna corrispondenza, 
+viene restituito **NIL**
+- se viene riscontrata una corrispondenza nel corso dell'esplorazione, viene 
+restituito **T** (esplorazione ovviamente si arresta)
 
 ### funzioni supportate
 - __DEF-CLASS__
 
 ## PARTS-STRUCTURE
 
-__SINTASSI:
-'(' parts-structure \<parents\> \<fields\>* ')'__
+### sintassi:
+- `'(' parts-structure <parents> <fields>* ')'`
 
 Crea la struttura della classe, scomponendo la parte dedicata agli attributi e 
 quella dedicata ai metodi. Viene lanciato un errore se la lista degli attributi
@@ -168,8 +179,8 @@ quella dedicata ai metodi. Viene lanciato un errore se la lista degli attributi
 
 ## FIELDS-STRUCTURE
 
-__SINTASSI:
-'(' fields-structure \<fields\>* ')'__
+### sintassi:
+- `'(' fields-structure <fields>* ')'`
 
 Definisce la struttura della rappresentazione degli attributi della classe
 
@@ -178,26 +189,30 @@ Definisce la struttura della rappresentazione degli attributi della classe
 
 ## FIELD-DEFINITION
 
-__SINTASSI:
-'(' field-definition \<current-field\> ')'__
+### sintassi:
+- `'(' field-definition <current-field> ')'`
 
-Viene creata/analizzata la tripla rappresentata da *current-field* 
-'(' \<attributo\> \<valore\> \<tipo\> ')':
-- __*current-field* è una lista da un elemento -> '(' \<attributo\> ')':__
-*valore* viene inizializzato con NIL e *tipo* con T
+Viene creata/analizzata la tripla rappresentata da `current-field` 
+`'(' <attributo> <valore> <tipo> ')'`:
 
-- __*current-field* è una coppia -> '(' \<attributo\> \<valore\> ')':__
-*tipo* viene inizializzato con T
+- **`current-field` è una lista da un elemento -> `'(' <attributo> ')'`:**
+    
+    - `valore` viene inizializzato con **NIL** 
+    - `tipo` viene inizializzato con **T**
 
-- __*current-field* è una tripla -> 
-'(' \<attributo\> \<valore\> \<tipo\> ')':__
-    - se *tipo* non è un tipo primitivo in Common-Lisp o il nome di una classe, 
-    viene lanciato un errore (controllo eseguito da __VALID-FIELD-TYPE__)
-    - se *valore* non è del tipo indicato da *tipo* viene lanciato un errore
-    (controllo eseguito da __TYPE-MATCHING__)
-    - se *attributo* è presente in una delle superclassi della classe che si 
-    vuole creare (controllo eseguito da __IS-INHERITED__)
-        - se *tipo* non è un sottotipo del tipo indicato per *attributo* nella
+- **`current-field` è una coppia -> `'(' <attributo> <valore> ')'`:**
+    
+    - `tipo` viene inizializzato con **T**
+
+- **`current-field` è una tripla -> `'(' <attributo> <valore> <tipo> ')'`:**
+    
+    - se `tipo` non è un tipo primitivo in Common-Lisp o il nome di una classe, 
+    viene lanciato un errore (controllo eseguito da **VALID-FIELD-TYPE**)
+    - se `valore` non è del tipo indicato da `tipo` viene lanciato un errore
+    (controllo eseguito da **TYPE-MATCHING**)
+    - se `attributo` è presente in una delle superclassi della classe che si 
+    vuole creare (controllo eseguito da **IS-INHERITED**)
+        - se `tipo` non è un sottotipo del tipo indicato per `attributo` nella
         superclasse considerata, viene lanciato un errore
     - altrimenti la tripla viene inizializzata correttamente
 
@@ -206,45 +221,47 @@ Viene creata/analizzata la tripla rappresentata da *current-field*
 
 ## METHODS-STRUCTURE
 
-__SINTASSI:
-'(' method-structure \<methods\>* ')'__
+### sintassi:
+- `'(' method-structure <methods>* ')'`
 
-Definisce la struttura della rappresentazione dei metodi della classe. Se un 
-metodo viene definito più di una volta, viene lanciato un errore
+Definisce la struttura della rappresentazione dei metodi della classe.\
+Se un metodo viene definito più di una volta, viene lanciato un errore
 
 ### funzioni supportate
 - __PARTS-STRUCTURE__
 
 ## METHOD-DEFINITION
 
-__SINTASSI:
-'(' method-definition \<current-method\> ')'__
+### sintassi:
+- `'(' method-definition <current-method> ')'`
 
-Viene analizzato\creato il metodo corrente. *current-method* è una 
+Viene analizzato\creato il metodo corrente. `current-method` è una 
 lista siffatta:
-- '(' \<method-name\> \<method-args\>* \<method-body\>* ')'
+
+- `'(' <method-name> <method-args>* <method-body>* ')'`
 
 Se le varie parti passano il controllo di correttezza, viene creata la coppia:
-- '(' \<method-name\> '.' \<anonymous-function\>* ')'
 
-*anonymous-function* è la funzione anonima relativa a *method-name* 
-restituita da
-__PROCESS-METHOD__
+- `'(' <method-name> '.' <anonymous-function> ')'`
+
+`anonymous-function` è la funzione anonima relativa a `method-name` 
+restituita da **PROCESS-METHOD**
 
 ### funzioni supportate
 - __METHOD-STRUCTURE__
 
 ## INSTANCE_RAPRESENTATION
 
-__SINTASSI:
-'(' instance-rapresentation \<class-name\> \<fields\>* ')'__
+### sintassi:
+- `'(' instance-rapresentation <class-name> <fields>* ')'`
 
 Definisce la rappresentazione di una istanza di una classe. Se i metodi da essa 
 chiamati non restituiscono errori, viene creata l'istanza, costituente nella 
 lista:
-- '(' 'OOLINST \<class-name\> \<fields>* ')'
 
-*fields* è una lista che raccoglie gli attributi provenienti dalle superclassi 
+- `'(' 'OOLINST <class-name> <fields>* ')'`
+
+`fields` è una lista che raccoglie gli attributi provenienti dalle superclassi 
 e che non sono stati inizializzati nell'istanza, oltre ovviamente 
 agli attributi inizializzati dalla stessa. 
 Tutto questo salvo errori riguardo tipo, ereditarietà...
@@ -254,36 +271,38 @@ Tutto questo salvo errori riguardo tipo, ereditarietà...
 
 ## FIELD-COMPOSITION-MAKE
 
-__SINTASSI:
-'(' field-composition-make \<fields\>* ')'__
+### sintassi:
+- `'(' field-composition-make <fields>* ')'`
 
 Crea e restituisce una lista di coppie (attributo valore) recuperando i valori 
-dalla lista
-*fields* della __MAKE__
+dalla lista `fields` della **MAKE**
 
 ### funzioni supportate
 - __INSTANCE-RAPRESENTATION__
 
 ## GET-COMPLETE-PARENTS-FIELDS
 
-__SINTASSI:
-'(' get-complete-parents-fields \<parents-list\>* ')'__
+### sintassi:
+- `'(' get-complete-parents-fields <parents-list>* ')'`
 
 Risale l'albero delle superclassi a partire dalla classe attuale e, per ogni 
-classe di *parents-list* , recupera la parte dedicata agli attributi,
+classe di `parents-list` , recupera la parte dedicata agli attributi,
 ordinandola in una lista di coppie/triple/singoletti, a seconda della 
 definizione di quest'ultimi.
-L'esplorazione viene eseguita sia in "lunghezza", esplorando tutti le classi 
-appartenenti a *parents-list*, sia in "altezza", esplorando, per ogni classe 
-di *parents-list* anche il proprio albero delle superclassi.
+L'esplorazione viene eseguita:
+
+- **in "*lunghezza*"**: esplorando tutti le classi appartenenti alle 
+`parents-list` di ogni classe
+- **in "*altezza*"**: esplorando, per ogni classe di `parents-list`, anche il 
+proprio albero delle superclassi.
 
 ### funzioni supportate 
 - __INSTANCE-RAPRESENTATION__
 
 ## GET-COMPLETE-CLASS-FIELDS
 
-__SINTASSI:
-'(' get-complete-class-fields \<class-fields\>* ')'__
+### sintassi:
+- `'(' get-complete-class-fields <class-fields>* ')'`
 
 Restituisce una lista contenente gli attrubuti della classe corrente.
 
@@ -293,23 +312,25 @@ Restituisce una lista contenente gli attrubuti della classe corrente.
 
 ## FIELDS-FROM-PARENTS
 
-__SINTASSI:
-'(' fields-from-parents \<list-of-total-fields\>* \<fields-from-make\>* ')'__
+### sintassi:
+- `'(' fields-from-parents <list-of-total-fields>* <fields-from-make>* ')'`
 
 Notare che: 
-- *list-of-total-fields* è la lista contenente tutti gli attributi
+
+- `list-of-total-fields` è la lista contenente tutti gli attributi
 dall'albero delle superclassi
-- *fields-from-make* è la lista contenente tutti gli attributi inizializzati
+- `fields-from-make` è la lista contenente tutti gli attributi inizializzati
 nell'istanza
 
 Restituisce la lista degli attributi provenienti dalle superclassi. Vengono
 considerati due casi:
-- __*field-from-make* è vuota:__ l'istanza è stata creata senza inizializzare
-alcun attributo, quindi viene restituita *list-of-total-fields* così per come è
-- __*field-from-make* contiene attributi:__ l'istanza è stata creata 
+
+- **`field-from-make` è vuota:** l'istanza è stata creata senza inizializzare
+alcun attributo, quindi viene restituita `list-of-total-fields` così per come è
+- **`field-from-make` contiene attributi:** l'istanza è stata creata 
 inizializzando parte o tutti gli attributi provenienti dall'albero delle 
 superclassi della classe di appartenenza, quindi viene controllato che ogni
-attributo rispetti la specifica del __tipo__ definita nella classe 
+attributo rispetti la specifica del **tipo** definita nella classe 
 di appartenenza dello stesso
 
 ### funzioni supportate
@@ -317,11 +338,11 @@ di appartenenza dello stesso
 
 ## LIST-FORMATTING-TO-MAKE
 
-__SINTASSI:
-'(' list-formatting-to-make \<list-def-class-format\>* ')'__
+### sintassi:
+- `'(' list-formatting-to-make <list-def-class-format>* ')'`
 
-Converte la lista degli attributi della classe *list-def-class-format*, nella
-quale non ci sono errori di tipo, nella stessa lista in formato "make", ovvero 
+Converte la lista degli attributi della classe `list-def-class-format`, nella
+quale non ci sono errori di tipo, nella stessa lista in formato "*make*", ovvero 
 creando coppie (attributo valore) e la restituisce.
 
 ### funzioni supportate
@@ -329,52 +350,51 @@ creando coppie (attributo valore) e la restituisce.
 
 ## FIELDS-FROM-PARENTS-ON-FIELD
 
-__SINTASSI 
-'(' fields-from-parents-on-field \<list-of-total-fields\>* 
-\<field-from-make\>')'__
+### sintassi 
+- `'(' fields-from-parents-on-field <list-of-total-fields>* 
+<field-from-make>')'`
 
-Notare che *field-from-make* è il nome di un attributo inizializzato 
-dall'istanza.
-Controlla che *field-from-make* sia un __sottotipo__ del tipo indicato nella 
+Notare che `field-from-make` è il nome di un attributo inizializzato 
+dall'istanza.\
+Controlla che `field-from-make` sia un **sottotipo** del tipo indicato nella 
 definizione della classe alla quale esso appartiene. 
-- __il controllo termina con esito positivo__: *field-from-make* viene rimosso
-da *list-of-total-fields* poichè rappresenta una ridefinizione corretta dello 
-stesso.
-- __il controllo termina con esito negativo__: viene lanciato un errore.
+- **il controllo termina con esito positivo**: 
+    - `field-from-make` viene rimosso da `list-of-total-fields` poichè 
+    rappresenta una ridefinizione corretta dello stesso.
+- **il controllo termina con esito negativo**: viene lanciato un errore.
 
 ### funzioni supportate
 - __FIELDS-FROM-PARENTS__
 
 ## REMOVE-ATOM
 
-__SINTASSI:
-'(' remove-atom \<atom-to-remove\> \<list-of-lists\>* ')'
+### sintassi:
+- `'(' remove-atom <atom-to-remove> <list-of-lists>* ')'`
 
-Restituisce la lista *list-of-lists* alla quale sono state rimosse tutte le 
-sottoliste che hanno *atom-to-remove* come primo elemento.
+Restituisce la lista `list-of-lists` alla quale sono state rimosse tutte le 
+sottoliste che hanno `atom-to-remove` come primo elemento.
 
 ### funzioni supportate 
 - __FIELDS-FROM-PARENTS-ON-FIELD__
 
 ## REMOVE-DUPLICATED-ELEMENTS 
 
-__SINTASSI:
-'(' remove-duplicated-elements \<list-of-lists\>* ')'
+### sintassi:
+- `'(' remove-duplicated-elements <list-of-lists>* ')'`
 
-Restituisce la lista *list-of-lists* nella quale ogni sottolista che ha come
+Restituisce la lista `list-of-lists` nella quale ogni sottolista che ha come
 primo elemento un atomo è presente una volta sola.
 
 ### funzioni supportate
 - __INSTANCE-RAPRESENTATION__
 
-
 ## GET-FIELDS-NAME
 
-__SINTASSI:
-'(' get-fields-name \<fields\>* ')'__
+### sintassi:
+- `'(' get-fields-name <fields>* ')'`
 
-Restituisce i nomi dei campi contenuti nella lista *fields*, che 
-rappresenta gli attributi di un'istanza. 
+Restituisce i nomi dei campi o dei metodi contenuti nella lista `fields`
+(`methods`), che rappresenta gli attributi di un'istanza. 
 La lista restituita conterrà i nomi dei campi in un formato leggibile.
 
 ### funzioni supportate
@@ -382,10 +402,10 @@ La lista restituita conterrà i nomi dei campi in un formato leggibile.
 
 ## GET-FIELDS-NAME-OF-CLASS
 
-__SINTASSI: 
-'(' get-fields-name-of-class \<class-fields\>* ')'__
+### sintassi: 
+- `'(' get-fields-name-of-class <class-fields>* ')'`
 
-Restituisce i nomi dei campi della classe, estratti dalla lista *class-fields*, 
+Restituisce i nomi dei campi della classe, estratti dalla lista `class-fields`, 
 che rappresenta la definizione della classe. 
 La lista restituita conterrà i nomi dei campi in un formato leggibile.
 
@@ -400,8 +420,9 @@ La lista restituita conterrà i nomi dei campi in un formato leggibile.
 - __GET-PARENTS-FIELDS__
 
 ## GET-PARENTS
-__SINTASSI: 
-'(' get-parents-field \<parents\>* \<field-name\> ')'__
+
+### sintassi: 
+- `'(' get-parents-field <parents>* <field-name> ')'`
 
 Ricerca ricorsivamente un campo specifico in una lista di classi genitore 
 e lo restituisce.
@@ -410,8 +431,9 @@ e lo restituisce.
 - __FIELD__
 
 ## METHOD*
-__SINTASSI: 
-'(' method* \<class-name\> \<field-name\> ')'__
+
+### sintassi: 
+- `'(' method* <class-name> <field-name> ')'`
 
 Ricerca ricorsivamente la presenza di un metodo in una classe specifica e con 
 un nome di campo specifico e lo restituisce.
@@ -420,8 +442,9 @@ un nome di campo specifico e lo restituisce.
 - __GET-PARENTS-METHOD__
 
 ## GET-PARENTS-METHOD
-__SINTASSI: 
-'(' get-parents-method \<parents\>* \<method-name\> ')'__
+
+### sintassi: 
+- `'(' get-parents-method <parents>* <method-name> ')'`
 
 Ricerca ricorsivamente la presenza di un metodo in una lista di classi genitore 
 e lo restituisce.
@@ -430,44 +453,51 @@ e lo restituisce.
 - __IS-METHOD__
 
 ## IS-METHOD
-__SINTASSI: 
-'(' is-method \<class-name\> \<method-name\> ')'__
+
+### sintassi: 
+- `'(' is-method <class-name> <method-name> ')'`
 
 Verifica ricorsivamente la presenza di un metodo in una classe specifica 
 o nelle sue classi genitore.
+
 ### funzioni supportate
 - __PROCESS-METHOD__
 - __METHOD*__
 
 ## REWRITE-METHOD-CODE
-__SINTASSI: 
-'(' rewrite-method-code \<method-name\> \<method-spec\>* ')'__
+
+### sintassi: 
+- `'(' rewrite-method-code <method-name> <method-spec>* ')'`
 
 Riscrive il codice di un metodo specifico, restituendo una nuova specifica 
 di metodo.
+
 ### funzioni supportate
 - __PROCESS-METHOD__
 
 ## PROCESS-METHOD
-__SINTASSI: 
-'(' rewrite-method-code \<method-name\> \<method-spec\>* ')'__
+
+## sintassi: 
+- `'(' rewrite-method-code <method-name> <method-spec>* ')'`
 
 Aggiorna la definizione di un metodo, sostituendo la funzione originale con una
- funzione lambda che richiama il metodo esistente. 
- Inoltre, riscrive il codice del metodo usando la funzione 
- `rewrite-method-code`.
+funzione lambda che richiama il metodo esistente. 
+Inoltre, riscrive il codice del metodo usando la funzione 
+**rewrite-method-code**.
 
 ### funzioni supportate
 - __DEF-CLASS__
 
 ## VALID-FIELD-TYPE
-__SINTASSI: 
-'(' valid-field-type \<field-type\> ')'__
+
+### sintassi: 
+- `'(' valid-field-type <field-type> ')'`
 
 Accetta un tipo di dati (`field-type`) e verifica se è un tipo di dati valido
 in Common Lisp o se rappresenta una classe esistente. 
-Restituisce `T` se il tipo di dati è valido, altrimenti genera un errore 
-con un messaggio dettagliato.
+
+- Restituisce **T** se il tipo di dati è valido.
+- altrimenti genera un errore con un messaggio dettagliato.
 
 TIPI VALIDI:
 - 'number'
@@ -478,237 +508,46 @@ TIPI VALIDI:
 - 'real'
 - 'rational'
 - 'complex'
+- `class-name` (ovviamente se `class-name` è una classe esistente)
 
 ### funzioni supportate
 - __FIELD-DEFINITION__
 
 ## IS-INHERITED
-__SINTASSI: 
-'(' is-inherited \<parents\>* \<current-field\> ')'__
+
+### sintassi: 
+- `'(' is-inherited <parents>* <current-field> ')'`
 
 Accetta una lista di classi (`parents`) e un campo corrente, e verifica se 
 il campo è ereditato da una di queste classi parents. 
-Restituisce `T` se il campo è ereditato correttamente, altrimenti genera 
-un errore con un messaggio dettagliato.
+
+- Restituisce **T** se il campo è ereditato correttamente.
+- altrimenti genera un errore con un messaggio dettagliato.
 
 ### funzioni supportate
 - __FIELD-DEFINITION__
 
 ## TYPE-MATCHING
-__SINTASSI:
- '(' type-matching \<current-field\> ')'__
+
+### sintassi:
+- `'(' type-matching <current-field> ')'`
 
 Accetta un campo corrente e verifica se il valore associato al campo è del 
-tipo di dati specificato per quel campo. In caso affermativo, la funzione 
-restituirà `T`. In caso contrario, genererà un errore con un messaggio 
-informativo.
+tipo di dati specificato per quel campo. 
+
+- In caso affermativo, la funzione restituirà **T**. 
+- In caso contrario, genererà un errore con un messaggio informativo.
 
 ### funzioni supportate
 - __FIELD-DEFINITION__
 
 ## CONTAINS-DUPLICATES
-__SINTASSI: 
-'(' contains-duplicates \<list\>* ')'__
 
-accetta una lista come argomento e restituisce `t` se la lista contiene
-duplicati, altrimenti restituisce `nil`.
+### sintassi: 
+- `'(' contains-duplicates <list>* ')'`
+
+accetta una lista come argomento e restituisce **T** se la lista contiene
+duplicati, altrimenti restituisce **NIL**.
 
 ### funzioni supportate
 - __METHODS-STRUCTURE__
-
-# test effettuati
-
-## creazione classi
-
-### corrette 
-
-- (def-class 'animal nil '(fields (name "Animal") (surname "Something") 
-     (age 108 integer) (country "Africa")) '(methods (eat ()) (run ())))
-    - ANIMAL
-
-- (def-class 'felix '(animal) '(fields (name "Felix") (children 5 integer))
-    '(methods (eat ())))
-    - FELIX
-
-- (def-class 'cat '(felix) '(fields (food-quantity 7 integer)))
-    - CAT
-
-- (def-class 'person nil '(fields (name "Eve") (age 21 integer)))
-    - PERSON
-
-- (def-class 'student '(person) ‘(fields (name "Eva Lu Ator") 
-(university "Berkeley" string)) '(methods
-(talk (&optional (out *standard-output*))
-    (format out "My name is ~a~%My age is ~d~%" 
-        (field this 'name) (field this 'age)))))
-    - STUDENT
-
-### errate
-
-- (def-class 'person nil '(fields (name "Eve") (age 21 float)))
-    - error: Type-matching: value 21 of field AGE is not of the type specified
-     (FLOAT)
-
-- (def-class 'person '(human) '(fields (name "Eve") (age 21 integer)))
-    - error: Def-class: specified parents are not existing classes
-
-- (def-class 'cat '(felix) '(fields (food-quantity 7 integer) 
-(children 7.8 float)))
-    - error: Is-inherited: value 7.8 of field CHILDREN is not a 
-    subtype of INTEGER
-
-- (def-class 'person nil '(fields (name "Eve") (age 21 integer) 
-(name "Person" string)))
-    - error: fields-structure: duplicated fields detected
-
-- (def-class 'animal nil '(fields (name "Animal") (surname "Something") 
-     (age 108 integer) (country "Africa")) '(methods (eat ()) (eat ())))
-    - error: methods-structure: duplicated methods detected
-
-## creazione istanze 
-    data la creazione corretta delle classi
-
-### corrette
-- (defparameter fufi (make 'cat 'name "Fufi" 'age 6))
-    - FUFI
-
-- (defparameter whisky (make 'cat))
-    - WHISKY
-
-- (defparameter alex (make 'student 'name "Alex The Lion" 'age 25 'university
-"Bicocca"))
-    - ALEX
-
-- (defparameter gabriele (make 'student))
-    - GABRIELE
-### errate
-
-- (defparameter fufi (make 'cat 'name "Fufi" 'name "Ciao"))
-    - error: Ffpof: you have tried to initialize the same field more than once!
-
-- (defparameter fufi (make 'cat 'name "Fufi" 'age 107.4))
-    - error: Ffpof: field type 107.4 in make does not match its definition in 
-    its class (INTEGER)
-
-- (defparameter fufi (make 'cat 'name "Fufi" 'age 14 'height 32))
-    - error: Field (class): This class has no parents so field HEIGHT does not 
-    exist!
-
-- (defparameter friedmann (make 'dog))
-    - error: Make: class DOG not found
-
-## is-class e is_istance
- date le creazioni corrette di classi e istanze
-
-### corretti
-- (is-instance alex T)
-    - T
-
-- (is-instance alex 'person)
-    - T
-
-- (is-instance fufi 'animal)
-    - T
-
-- (is-instance whisky 'felix)
-    - T
-
-### errati
-- (is-instance alex 'felix)
-    - NIL
-
-- (is-instance fufi 'dog)
-    - NIL
-
-- (is-instance whisky 'cat)
-    - NIL 
-
-## metodi
- date le creazioni corrette di classi e istanze
-
-### corretti
-
-- (talk alex)
-    - My name is Alex The Lion  
-    My age is 25  
-    NIL
-
-- (talk gabriele)
-    - My name is Eva Lu Ator  
-    My age is 21  
-    NIL
-
-### errati
-
-- (talk fufi)
-    - error: Is-method: This class has no parents so method TALK does not exist!
-
-- (talk 45)
-    - error: Is-method: There is something wrong with this method
-
-## field
- date le creazioni corrette di classi e istanze
-
-### corretti 
-
-- (field gabriele 'name)
-    - "Eva Lu Ator"
-
-- (field alex 'age)
-    - 25
-
-- (field 'person 'age)
-    - T
-
-- (field whisky 'children)
-    - 5
-
-### errati
-
-- (field gabriele 'surname)
-    - error: Field (instance): field SURNAME does not exist in the instance
-(OOLINST STUDENT ((NAME Eva Lu Ator) (UNIVERSITY Berkeley) (AGE 21)))
-
-- (field 'human 'name)
-    - error: Field (instance): HUMAN is not a class or an instance
-
-- (field whisky nil)
-    - error: Field (instance): field-name is NULL
-
-- (field whisky '(name age))
-    - error: Field (instance): field-name is a list
-
-- (field 'person 'children)
-    - error: Field (class): this class has no parents so field CHILDREN does
-    not exist!!
-
-## field*
- date le creazioni corrette di classi e istanze
-
-### corretti
-
-- (field* 'person '(name age))
-    - T
-
-- (field* whisky '(name children))
-    - T
-
-- (field* 'person 'age) -> nel caso in cui riceva un simbolo, si comporta come 
-__FIELD__
-    - T
-
-I risultati dei test seguenti sono giustificati dalla possibilità di creare
-una istanza senza inizializzare alcun attributo (*fields* è () o nil)
-- (field* 'person ())
-    - T
-
-- (field* 'person nil)
-    - T
-### errati
-
-- (field* 'human '(name age))
-    - error: Field: HUMAN is not a class or an instance
-
-- (field* gabriele '(age name surname))
-    - error: Field (instance): field SURNAME does not exist in the instance
-    (OOLINST STUDENT ((NAME Eva Lu Ator) (UNIVERSITY Berkeley) (AGE 21)))
