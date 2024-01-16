@@ -272,10 +272,15 @@ This class has no parents so field ~a does not exist!~%" field-name)))
 			    field-name))))
 		 (t (format *STANDARD-OUTPUT* "Field (class): ~
 field ~a found in this class (~a)~%" field-name instance)))))
-  (if (is-class instance)
-      (cadr (find
+(if (is-class instance)
+      (if (member field-name (get-fields-name-of-class 
+              (cdr (nth 2 (get-class-spec instance)))))
+          (cadr (find
              (car (list field-name))
              (cdr (nth 2 (get-class-spec instance))) :test #'member))
+          (search-field-in-parents 
+                (cadr (get-class-spec instance)) 
+                field-name))
       (cadr (find
              (car (list field-name))
              (nth 2 instance) :test #'member))))
@@ -409,7 +414,8 @@ you have tried to initialize the same field more than once!~%"))))
 (defun search-field-in-parents (parents field-name)
   (unless 
       (field* (car parents) field-name)
-    (search-field-in-parents (cdr parents) field-name)))
+    (search-field-in-parents (cdr parents) field-name))
+  (field (car parents) field-name))
 
 ;;;METHOD
 (defun method* (class-name method-list)
