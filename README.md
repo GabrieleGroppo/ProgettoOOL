@@ -5,7 +5,6 @@ Autori:
 - Groppo Gabriele - Matricola 902238
 - Caputo Lorenzo - Matricola 894528
 
-
 # introduzione
 
 Ai tempi di Simula e del primo Smalltalk, molto molto tempo prima di Python, 
@@ -111,9 +110,9 @@ Premesso che `field-name` è una lista di attributi e `instance` è il nome di u
 classe o di una istanza, chiama la funzione **FIELD** 
 su ogni attributo di `field-name`. Restituisce:
 
-- **vero** se tutti gli attributi in `field-name` sono presenti in `instance`
+- **T** se tutti gli attributi in `field-name` sono presenti in `instance`
 - **errore** se anche uno solo degli attributi in `field-name` **non** è 
-presente in `instance` 
+presente in `instance`. 
 
 # funzioni di supporto
 
@@ -122,7 +121,7 @@ presente in `instance`
 ### sintassi:
 - `'(' get-class-parents <class-name> ')'`
 
-Restituisce la lista `parents` di `class_name`
+Restituisce la lista `parents` di `class_name`.
 
 ### funzioni supportate
 - __PARENT__
@@ -451,13 +450,13 @@ La lista restituita conterrà i nomi dei campi\metodi in un formato leggibile.
 - __FIELDS-FROM-PARENTS-ON-FIELD__
 - __GET-PARENTS-FIELDS__
 
-## GET-PARENTS
+## SEARCH-FIELD-IN-PARENTS
 
 ### sintassi: 
-- `'(' get-parents-field <parents>* <field-name> ')'`
+- `'(' search-field-in-parents <parents>* <field-name> ')'`
 
-Ricerca ricorsivamente un campo specifico in una lista di classi genitore 
-e lo restituisce.
+Ricerca ricorsivamente `field-name` in una lista di genitori `parents` 
+e restituisce il valore associato ad esso se lo trova.
 
 ### funzioni supportate
 - __FIELD__
@@ -472,9 +471,9 @@ lancia **IS-METHOD** per ogni metodo presente.
 
 - Restituisce **T** se ogni metodo in `method-list` è presente in `class-name`
 (nome di una classe) o nelle sue superclassi.
-- Restituisce **T** se ogni metodo in `method-list` è presente nella classe a
-cui appartiene `class-name`(nome di una istanza) o nelle sue superclassi.
-- Altrimenti viene lanciato un errore
+- Restituisce **T** se ogni metodo in `method-list` è presente nella classe a 
+cui appartiene `class-name` (nome di una istanza) o nelle sue superclassi.
+- Altrimenti viene lanciato un errore  
 
 ### funzioni supportate
 - __GET-PARENTS-METHOD__

@@ -272,7 +272,7 @@ This class has no parents so field ~a does not exist!~%" field-name)))
 			    field-name))))
 		 (t (format *STANDARD-OUTPUT* "Field (class): ~
 field ~a found in this class (~a)~%" field-name instance)))))
-(if (is-class instance)
+  (if (is-class instance)
       (if (member field-name (get-fields-name-of-class 
               (cdr (nth 2 (get-class-spec instance)))))
           (cadr (find
