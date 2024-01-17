@@ -43,8 +43,11 @@ unable to create the class -> ~a already exists~%" class-name)))
          (error (format nil "Def-class: ~
 specified parents are not existing classes~%")))
         ((member class-name parents)
-         (error (format nil "Def-class:
-the class ~a is also present in its parents' list ~a~%" class-name parents))))
+         (error (format nil "Def-class: ~
+the class ~a is also present in its parents' list ~a~%" class-name parents)))
+	((contains-duplicates parents)
+	 (error (format nil "Def-class: ~
+Duplicated class detected in parents' list.~%"))))
   (parent* class-name parents)
   ;; Creazione della classe
   (add-class-spec class-name
