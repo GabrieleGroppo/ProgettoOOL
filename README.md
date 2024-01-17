@@ -313,10 +313,13 @@ ordinandola in una lista di coppie/triple/singoletti, a seconda della
 definizione di quest'ultimi.
 L'esplorazione viene eseguita:
 
-- **in "*lunghezza*"**: esplorando tutti le classi appartenenti alle 
-`parents-list` di ogni classe
-- **in "*altezza*"**: esplorando, per ogni classe di `parents-list`, anche il 
+- **in "*pronfondità*"**: esplorando, per ogni classe di `parents-list`, anche il 
 proprio albero delle superclassi.
+- **in "*ampiezza*"**: esplorando tutti le classi appartenenti alle 
+`parents-list` di ogni classe
+
+>*NOTA*: L'ordine delle superclassi è importante quando la parents list 
+> di una classe contiene più genitori.
 
 ### funzioni supportate 
 - __INSTANCE-RAPRESENTATION__

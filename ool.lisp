@@ -1,6 +1,7 @@
 ;;; Autori:
-;;; Caputo Lorenzo 894528
 ;;; Groppo Gabriele 902238
+;;; Caputo Lorenzo 894528
+
 ;;; _*_ Mode: Lisp _*_
 
 ;;; ool.lisp
@@ -249,29 +250,26 @@ field ~a found in this instance (~a)~%"
 					  field-name
 					  (get-fields-name-of-class
 					   (nth 2 instance))))))))))
-;;;classe -> instance è il nome della classe
-	(t (format *STANDARD-OUTPUT* "Field (class): ~
-Checking ~a in class ~a~%" field-name instance)
+;;; classe -> instance è il nome della classe
+	(t
+;;; (format *STANDARD-OUTPUT* "Field (class): ~
+;;; Checking ~a in class ~a~%" field-name instance)
 	   (cond ((not 
                    (member 
                     field-name 
                     (get-fields-name-of-class 
                      (cdr (nth 2 (get-class-spec instance))))))
-		  (format *STANDARD-OUTPUT* 
-			  "field (class): 
-              field ~a not found in this class (~a). 
-              Checking in parents...~%"
-			  field-name 
-			  instance)
+;;; (format *STANDARD-OUTPUT* "field (class): 
+;;; field ~a not found in this class (~a). 
+;;; Checking in parents...~%"
+;;; field-name instance)
 		  (cond ((null (cadr (get-class-spec instance)))
 			 (error 
 			  (format nil "Field (class): ~
 This class has no parents so field ~a does not exist!~%" field-name)))
 			(T (search-field-in-parents 
 			    (cadr (get-class-spec instance)) 
-			    field-name))))
-		 (t (format *STANDARD-OUTPUT* "Field (class): ~
-field ~a found in this class (~a)~%" field-name instance)))))
+			    field-name)))))))
   (if (is-class instance)
       (if (member field-name (get-fields-name-of-class 
               (cdr (nth 2 (get-class-spec instance)))))
@@ -314,11 +312,11 @@ field ~a found in this class (~a)~%" field-name instance)))))
     (append 
      (get-complete-class-fields 
       (cdr (nth 2 (get-class-spec (car parents-list)))))
-;;; field del genitore successivo nella parents-list della classe corrente
-     (get-complete-parents-fields (cdr parents-list))
-;;; field del genitore (del genitore corrente) della classe corrente
+     ;;; field del genitore (del genitore corrente) della classe corrente
      (get-complete-parents-fields 
-      (nth 1 (get-class-spec (car parents-list)))))))
+      (nth 1 (get-class-spec (car parents-list))))
+;;; field del genitore successivo nella parents-list della classe corrente
+     (get-complete-parents-fields (cdr parents-list)))))
 
 ;;; Restituisce una lista di attributi completi (nome valore tipo) della classe
 (defun get-complete-class-fields (class-fields)
