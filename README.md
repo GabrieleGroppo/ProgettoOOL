@@ -22,7 +22,7 @@ codice nei metodi stessi.
 
 ## DEF-CLASS
 
-### sintassi:
+### Sintassi:
 - `'(' def-class <class-name> <parents> <parts>* ')'`
 
 Definisce la struttura di una classe e la memorizza in una hash-table 
@@ -34,7 +34,7 @@ rilevati errori nella definizione della classe, essa viene aggiunta a
        
 ## MAKE
 
-### sintassi:
+### Sintassi:
 - `'(' make <class-name> <fields>* ')'`
 
 Effettua la creazione di una nuovo oggetto di una classe.
@@ -54,7 +54,7 @@ creazione  dell'oggetto, rappresentato come segue:
 
 ## IS-CLASS
 
-### sintassi:
+### Sintassi:
 - `'(' is-class <class-name> ')'`
 
 controlla che `class-name` sia il nome di una classe precedentemente 
@@ -63,7 +63,7 @@ Restituisce **T** se la condizione viene verificata.
 
 ## IS-INSTANCE
 
-### sintassi:
+### Sintassi:
 - `'(' is-instance <value> [<class-name>] ')'`
 
 controlla che `value` sia una istanza di `class-name`. 
@@ -78,7 +78,7 @@ Restituisce **T** se la condizione viene verificata.
 
 ## FIELD
 
-### sintassi:
+### Sintassi:
 - `'(' field <instance> <field-name> ')'`
 
 ### `instance` è nome di una classe
@@ -103,7 +103,7 @@ all'interno della struttura dell'oggetto
 
 ## FIELD*
 
-### sintassi:
+### Sintassi:
 - `'(' field* <instance> <field-name>* ')'`
 
 Premesso che `field-name` è una lista di attributi e `instance` è il nome di una
@@ -114,45 +114,45 @@ su ogni attributo di `field-name`. Restituisce:
 - **errore** se anche uno solo degli attributi in `field-name` **non** è 
 presente in `instance`. 
 
-# funzioni di supporto
+# Funzioni di supporto
 
 ## GET-CLASS-PARENTS
 
-### sintassi:
+### Sintassi:
 - `'(' get-class-parents <class-name> ')'`
 
 Restituisce la lista `parents` di `class_name`.
 
-### funzioni supportate
+### Funzioni supportate
 - __PARENT__
 - __GET-ALL-CLASS-PARENTS__
 
 ## GET-ALL-CLASS-PARENTS
 
-### sintassi:
+### Sintassi:
 - `'(' get-all-class-parents <class-name> ')'`
 
 Restituisce la lista delle classi appartenenti all'albero delle superclassi di
 `class-name`
 
-### funzioni supportate
+### Funzioni supportate
 - __IS-INSTANCE__
 
 ## PARENT
 
-### sintassi:
+### Sintassi:
 - `'(' parent <searched-class-name> <class-name> ')'`
 
 Controlla che la classe `class-name` non sia una superclasse delle superclassi
 di `class-name` stessa.\
 Evita quindi che si formi un ciclo, lanciando un errore qualora si creasse. 
 
-### funzioni supportate
+### Funzioni supportate
 - __PARENT*__
 
 ## PARENT*
 
-### sintassi:
+### Sintassi:
 - `'(' parent* <searched-class-name> <parents>* ')'`
 
 Estende il controllo cominciato da **FIELD** nell'albero delle superclassi di
@@ -163,12 +163,12 @@ viene restituito **NIL**
 - se viene riscontrata una corrispondenza nel corso dell'esplorazione, viene 
 restituito **T** (esplorazione ovviamente si arresta)
 
-### funzioni supportate
+### Funzioni supportate
 - __DEF-CLASS__
 
 ## PARTS-STRUCTURE
 
-### sintassi:
+### Sintassi:
 - `'(' parts-structure <parents> <parts>* ')'`
 
 Crea la struttura della classe, scomponendo la parte dedicata agli attributi e 
@@ -196,24 +196,24 @@ quella dedicata ai metodi.
         dall'ordine con le quali sono state presentate, prima la parte relativa
         ai **campi** e poi quella relativa ai **metodi** 
 
-### funzioni supportate
+### Funzioni supportate
 - __DEF-CLASS__
 
 ## FIELDS-STRUCTURE
 
-### sintassi:
+### Sintassi:
 - `'(' fields-structure <fields>* ')'`
 
 Definisce la struttura della rappresentazione degli attributi della classe.\
 Se un metodo viene definito più di una volta, viene lanciato un errore.\
 Chiama **FIELD-DEFINITION** per ogni campo per controllarne la correttezza.
 
-### funzioni supportate
+### Funzioni supportate
 - __PARTS-STRUCTURE__
 
 ## FIELD-DEFINITION
 
-### sintassi:
+### Sintassi:
 - `'(' field-definition <current-field> ')'`
 
 Viene creata/analizzata la tripla rappresentata da `current-field` 
@@ -237,24 +237,24 @@ Viene creata/analizzata la tripla rappresentata da `current-field`
         superclasse considerata, viene lanciato un errore
     - altrimenti la tripla viene inizializzata correttamente
 
-### funzioni supportate
+### Funzioni supportate
 - __FIELDS-STRUCTURE__
 
 ## METHODS-STRUCTURE
 
-### sintassi:
+### Sintassi:
 - `'(' method-structure <methods>* ')'`
 
 Definisce la struttura della rappresentazione dei metodi della classe.\
 Se un metodo viene definito più di una volta, viene lanciato un errore
 Chiama **METHOD-DEFINITION** per ogni metodo per controllarne la correttezza.
 
-### funzioni supportate
+### Funzioni supportate
 - __PARTS-STRUCTURE__
 
 ## METHOD-DEFINITION
 
-### sintassi:
+### Sintassi:
 - `'(' method-definition <current-method> ')'`
 
 Viene analizzato\creato il metodo corrente. `current-method` è una 
@@ -269,12 +269,12 @@ Se le varie parti passano il controllo di correttezza, viene creata la coppia:
 `anonymous-function` è la funzione anonima relativa a `method-name` 
 restituita da **PROCESS-METHOD**
 
-### funzioni supportate
+### Funzioni supportate
 - __METHOD-STRUCTURE__
 
 ## INSTANCE_RAPRESENTATION
 
-### sintassi:
+### Sintassi:
 - `'(' instance-rapresentation <class-name> <fields>* ')'`
 
 Definisce la rappresentazione di una istanza di una classe. Se i metodi da essa 
@@ -288,23 +288,23 @@ e che non sono stati inizializzati nell'istanza, oltre ovviamente
 agli attributi inizializzati dalla stessa. 
 Tutto questo salvo errori riguardo tipo, ereditarietà...
 
-### funzioni supportate
+### Funzioni supportate
 - __MAKE__
 
 ## FIELD-COMPOSITION-MAKE
 
-### sintassi:
+### Sintassi:
 - `'(' field-composition-make <fields>* ')'`
 
 Crea e restituisce una lista di coppie (attributo valore) recuperando i valori 
 dalla lista `fields` della **MAKE**
 
-### funzioni supportate
+### Funzioni supportate
 - __INSTANCE-RAPRESENTATION__
 
 ## GET-COMPLETE-PARENTS-FIELDS
 
-### sintassi:
+### Sintassi:
 - `'(' get-complete-parents-fields <parents-list>* ')'`
 
 Risale l'albero delle superclassi a partire dalla classe attuale e, per ogni 
@@ -313,31 +313,31 @@ ordinandola in una lista di coppie/triple/singoletti, a seconda della
 definizione di quest'ultimi.
 L'esplorazione viene eseguita:
 
-- **in "*pronfondità*"**: esplorando, per ogni classe di `parents-list`, anche il 
+- **in "*profondità*"**: esplorando, per ogni classe di `parents-list`, anche il 
 proprio albero delle superclassi.
 - **in "*ampiezza*"**: esplorando tutti le classi appartenenti alle 
 `parents-list` di ogni classe
 
->*NOTA*: L'ordine delle superclassi è importante quando la parents list 
-> di una classe contiene più genitori.
+>NOTA: l'ordine delle superclassi è importante quando la `parents-list` di
+una classe contiene più genitori.
 
-### funzioni supportate 
+### Funzioni supportate 
 - __INSTANCE-RAPRESENTATION__
 
 ## GET-COMPLETE-CLASS-FIELDS
 
-### sintassi:
+### Sintassi:
 - `'(' get-complete-class-fields <class-fields>* ')'`
 
 Restituisce una lista contenente gli attrubuti della classe corrente.
 
-### funzioni supportate
+### Funzioni supportate
 - __INSTANCE-RAPRESENTATION__
 - __GET-COMPLETE-PARENTS-FIELDS__
 
 ## FIELDS-FROM-PARENTS
 
-### sintassi:
+### Sintassi:
 - `'(' fields-from-parents <list-of-total-fields>* <fields-from-make>* ')'`
 
 Notare che: 
@@ -358,34 +358,35 @@ superclassi della classe di appartenenza, quindi viene controllato che ogni
 attributo rispetti la specifica del **tipo** definita nella classe 
 di appartenenza dello stesso
 
-### funzioni supportate
+### Funzioni supportate
 - __INSTANCE-RAPRESENTATION__
 
 ## LIST-FORMATTING-TO-MAKE
 
-### sintassi:
+### Sintassi:
 - `'(' list-formatting-to-make <list-def-class-format>* ')'`
 
 Converte la lista degli attributi della classe `list-def-class-format`, nella
 quale non ci sono errori di tipo, nella stessa lista in formato "*make*", ovvero 
 creando coppie (attributo valore) e la restituisce.
 
-### funzioni supportate
+### Funzioni supportate
 - __FIELDS-FROM-PARENTS__
 
 ## FIELDS-FROM-PARENTS-ON-FIELD
 
-### sintassi 
+### Sintassi 
 - `'(' fields-from-parents-on-field <list-of-total-fields>* 
 <field-from-make>')'`
 
-Notare che `field-from-make` è il nome di un attributo inizializzato 
-dall'istanza e `list-of-total-fields` ha lo stesso significato attribuitogli
-precedentemente.\
-L'appartenenza di `field-from-make` a `list-of-total-fields` è stata già
-verificata da **FIELD**.\
-Controlla che il valore associato a `field-from-make` sia un **sottotipo** del 
-tipo indicato nella definizione della classe alla quale l'attributo appartiene. 
+Notare che `field-from-make` è una coppia (\<*field-name*\> \<*value*\>) 
+estratta dalla creazione dell'istanza (**MAKE**) e `list-of-total-fields` 
+ha lo stesso significato attribuitogli precedentemente.\
+L'appartenenza del nome dell'attributo in `field-from-make` a 
+`list-of-total-fields` è stata già verificata da **FIELD**.\
+Controlla che il valore associato al nome dell'attributo nel `field-from-make` 
+sia un **sottotipo** del tipo indicato nella definizione della classe alla 
+quale l'attributo appartiene. 
 
 - **il controllo termina con esito positivo**: 
     - `field-from-make` viene rimosso da `list-of-total-fields` poichè 
@@ -396,54 +397,54 @@ tipo indicato nella definizione della classe alla quale l'attributo appartiene.
     - è stato inizializzato lo stesso attributo più di una volta, quindi viene
     lanciato un errore
 
-### funzioni supportate
+### Funzioni supportate
 - __FIELDS-FROM-PARENTS__
 
 ## REMOVE-ATOM
 
-### sintassi:
+### Sintassi:
 - `'(' remove-atom <atom-to-remove> <list-of-lists>* ')'`
 
 Restituisce la lista `list-of-lists` alla quale sono state rimosse tutte le 
 sottoliste che hanno `atom-to-remove` come primo elemento.
 
-### funzioni supportate 
+### Funzioni supportate 
 - __FIELDS-FROM-PARENTS-ON-FIELD__
 
 ## REMOVE-DUPLICATED-ELEMENTS 
 
-### sintassi:
+### Sintassi:
 - `'(' remove-duplicated-elements <list-of-lists>* ')'`
 
 Restituisce la lista `list-of-lists` nella quale ogni sottolista che ha come
 primo elemento un atomo è presente una volta sola (non saranno quindi presenti
 sottoliste che hanno lo stesso primo elemento).
 
-### funzioni supportate
+### Funzioni supportate
 - __INSTANCE-RAPRESENTATION__
 
 ## GET-FIELDS-NAME
 
-### sintassi:
+### Sintassi:
 - `'(' get-fields-name <fields>* ')'`
 
 Restituisce i nomi dei campi o dei metodi contenuti nella lista `fields`
 (`methods`), che rappresenta gli attributi\metodi di un'istanza. 
 La lista restituita conterrà i nomi dei campi\metodi in un formato leggibile.
 
-### funzioni supportate
+### Funzioni supportate
 - __MAKE__
 
 ## GET-FIELDS-NAME-OF-CLASS
 
-### sintassi: 
+### Sintassi: 
 - `'(' get-fields-name-of-class <class-fields>* ')'`
 
 Restituisce i nomi dei campi\metodi della classe, estratti dalla lista 
 `class-fields`, che rappresenta la definizione della classe. 
 La lista restituita conterrà i nomi dei campi\metodi in un formato leggibile.
 
-### funzioni supportate
+### Funzioni supportate
 - __IS-METHOD__
 - __IS-INHERITED__
 - __FIELDS-STRUCTURE__
@@ -455,18 +456,18 @@ La lista restituita conterrà i nomi dei campi\metodi in un formato leggibile.
 
 ## SEARCH-FIELD-IN-PARENTS
 
-### sintassi: 
+### Sintassi: 
 - `'(' search-field-in-parents <parents>* <field-name> ')'`
 
 Ricerca ricorsivamente `field-name` in una lista di genitori `parents` 
 e restituisce il valore associato ad esso se lo trova.
 
-### funzioni supportate
+### Funzioni supportate
 - __FIELD__
 
 ## METHOD*
 
-### sintassi: 
+### Sintassi: 
 - `'(' method* <class-name> <method-list> ')'`
 
 Premesso che `method-list` è una lista di metodi o un solo metodo, 
@@ -478,29 +479,29 @@ lancia **IS-METHOD** per ogni metodo presente.
 cui appartiene `class-name` (nome di una istanza) o nelle sue superclassi.
 - Altrimenti viene lanciato un errore  
 
-### funzioni supportate
+### Funzioni supportate
 - __GET-PARENTS-METHOD__
 
 ## GET-PARENTS-METHOD
 
-### sintassi: 
+### Sintassi: 
 - `'(' get-parents-method <parents>* <method-name> ')'`
 
 Ricerca ricorsivamente la presenza di un metodo in una lista di classi genitore 
 e lo restituisce.
 
-### funzioni supportate
+### Funzioni supportate
 - __IS-METHOD__
 
 ## IS-METHOD
 
-### sintassi: 
+### Sintassi: 
 - `'(' is-method <class-name> <method-name> ')'`
 
 ### `class-name` è il nome di una istanza:
 Verifica che `method-name` sia presente nella classe di appartenenza di 
 `class-name` o, eventualmente, nell'albero delle superclassi della stessa.\
-Verifico inoltre che la sua sintassi sia corretta. Viene lanciato un errore se:
+Verifico inoltre che la sua Sintassi sia corretta. Viene lanciato un errore se:
 
 - il metodo viene invocato con dei parametri errati
 - il metodo non è presente nella classe di `class-name` o nell'albero delle 
@@ -516,24 +517,24 @@ nell'albero delle superclassi della stessa. Viene lanciato un errore se:
 
 In caso positivo, invece, restituisce la **funzione anonima** associata ad esso.
 
-### funzioni supportate
+### Funzioni supportate
 - __PROCESS-METHOD__
 - __METHOD*__
 
 ## REWRITE-METHOD-CODE
 
-### sintassi: 
+### Sintassi: 
 - `'(' rewrite-method-code <method-name> <method-spec>* ')'`
 
 Riscrive il codice di un metodo specifico, restituendo una nuova specifica 
 di metodo, che accetta come parametro aggiuntivo **this**.
 
-### funzioni supportate
+### Funzioni supportate
 - __PROCESS-METHOD__
 
 ## PROCESS-METHOD
 
-### sintassi: 
+### Sintassi: 
 - `'(' rewrite-method-code <method-name> <method-spec>* ')'`
 
 Aggiorna la definizione di un metodo, sostituendo la funzione originale con una
@@ -541,12 +542,12 @@ funzione lambda che richiama il metodo esistente.
 Inoltre, riscrive il codice del metodo usando la funzione 
 **rewrite-method-code**.
 
-### funzioni supportate
+### Funzioni supportate
 - __DEF-CLASS__
 
 ## VALID-FIELD-TYPE
 
-### sintassi: 
+### Sintassi: 
 - `'(' valid-field-type <field-type> ')'`
 
 Accetta un tipo di dati (`field-type`) e verifica se è un tipo di dati valido
@@ -566,12 +567,12 @@ TIPI VALIDI:
 - 'complex'
 - `class-name` (ovviamente se `class-name` è una classe esistente)
 
-### funzioni supportate
+### Funzioni supportate
 - __FIELD-DEFINITION__
 
 ## IS-INHERITED
 
-### sintassi: 
+### Sintassi: 
 - `'(' is-inherited <parents>* <current-field> ')'`
 
 Accetta una lista di classi (`parents`) e un campo corrente, e verifica se 
@@ -580,12 +581,12 @@ il campo è ereditato da una di queste classi parents.
 - Restituisce **T** se il campo è ereditato correttamente.
 - altrimenti genera un errore con un messaggio dettagliato.
 
-### funzioni supportate
+### Funzioni supportate
 - __FIELD-DEFINITION__
 
 ## TYPE-MATCHING
 
-### sintassi:
+### Sintassi:
 - `'(' type-matching <current-field> ')'`
 
 Accetta un campo corrente e verifica se il valore associato al campo è del 
@@ -594,12 +595,12 @@ tipo di dati specificato per quel campo.
 - In caso affermativo, la funzione restituirà **T**. 
 - In caso contrario, genererà un errore con un messaggio informativo.
 
-### funzioni supportate
+### Funzioni supportate
 - __FIELD-DEFINITION__
 
 ## CONTAINS-DUPLICATES
 
-### sintassi: 
+### Sintassi: 
 - `'(' contains-duplicates <list>* ')'`
 
 accetta una lista come argomento e:
@@ -608,5 +609,5 @@ accetta una lista come argomento e:
 duplicati
 - altrimenti restituisce **NIL**.
 
-### funzioni supportate
+### Funzioni supportate
 - __METHODS-STRUCTURE__

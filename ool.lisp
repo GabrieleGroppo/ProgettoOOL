@@ -370,7 +370,7 @@ checking type matching (or subtype) between ~a and ~a~%"
 		  (format *STANDARD-OUTPUT* "Ffpof: fields match~%"))
 		 (t
 		  (error
-		   (format nil "Ffpof:
+		   (format nil "Ffpof: ~
 field type ~a does not match its definition in its class (~a)~%"
 			   (cadr field-from-make)
 			   (caddr (find
